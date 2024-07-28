@@ -1,0 +1,8 @@
+.aside{
+    border-right: 1px solid black;
+    padding: 10px 15px;
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
