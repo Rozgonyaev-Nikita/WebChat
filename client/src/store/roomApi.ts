@@ -3,7 +3,7 @@ import { IRoom } from '../types/IRoom'
 
 export const roomApi = createApi({
     reducerPath: 'roomApi',
-    tagTypes: ['Messages'],
+    tagTypes: ['Rooms'],
     baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/' }),
     endpoints: (builder) => ({
       getRoomApiByUser: builder.query<IRoom[], string>({
@@ -13,11 +13,11 @@ export const roomApi = createApi({
           result
             ? // successful query
               [
-                ...result.map(({ _id }) => ({ type: 'Messages', _id } as const)),
-                { type: 'Messages', id: 'LIST' },
+                ...result.map(({ _id }) => ({ type: 'Rooms', _id } as const)),
+                { type: 'Rooms', id: 'LIST' },
               ]
             : // an error occurred, but we still want to refetch this query when `{ type: 'Posts', id: 'LIST' }` is invalidated
-              [{ type: 'Messages', id: 'LIST' }],
+              [{ type: 'Rooms', id: 'LIST' }],
       }),
       addMessageinRoom: builder.mutation({
         query: (body) => ({
@@ -25,9 +25,17 @@ export const roomApi = createApi({
           method: 'POST',
           body
         }),
-        invalidatesTags: [{type: 'Messages', id: 'LIST'}]
+        invalidatesTags: [{type: 'Rooms', id: 'LIST'}]
+      }),
+      addRoom: builder.mutation({
+        query: (body) => ({
+          url: 'addRoom',
+          method: 'POST',
+          body
+        }),
+        invalidatesTags: [{type: 'Rooms', id: 'LIST'}]
       })
     }),
   })
 
-  export const { useGetRoomApiByUserQuery, useAddMessageinRoomMutation } = roomApi;
+  export const { useGetRoomApiByUserQuery, useAddRoomMutation, useAddMessageinRoomMutation } = roomApi;

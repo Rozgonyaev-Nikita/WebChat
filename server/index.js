@@ -26,7 +26,7 @@ const RoomScheme = mongoose.Schema({
   users: [{type: String}],
   messages: [
     {
-      name: {
+      authorName: {
         type: String,
         required: true,
       },
@@ -91,7 +91,7 @@ app.post("/api/registration", async (req, res) => {
   }
 });
 
-app.post('/api/rooms', async (req, res) => { //вступление в комнату
+app.post('/api/addRoom', async (req, res) => { //вступление в комнату
   const { type, nameRoom, userId } = req.body;
 
   try {
@@ -141,11 +141,32 @@ app.post('/api/rooms', async (req, res) => { //вступление в комн�
 });
 
 app.get('/api/getAllrooms/:user', async (req, res) => {
-  const user = req.params.user; // Получаем user из параметров
-  console.log('req', user);
-  const rooms = await Room.find({ users: user });
-  res.json(rooms);
-  console.log('rooms', rooms);
+  // const users = req.params.user; // Получаем user из параметров
+  // console.log('req', users);
+  // const rooms = await Room.find({ users });
+  // res.json(rooms);
+  // console.log('rooms', rooms);
+  const userId = req.params.user; // Получаем userId из параметров
+  console.log('req', userId);
+  
+  try {
+    // Предполагается, что у вас есть функция, которая получает пользователя по ID
+    const user = await Users.findById(userId);
+    console.log('user', user)
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Теперь найдем комнаты по массиву идентификаторов
+    const rooms = await Room.find({ _id: { $in: user.rooms } }); // Находим комнаты, идентификаторы которых находятся в массиве rooms
+    res.json(rooms);
+
+    console.log('rooms', rooms);
+  } catch (error) {
+    console.error('Error fetching rooms:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 app.post('/api/addMessage', async(req, res) => {
@@ -165,7 +186,7 @@ app.post('/api/addMessage', async(req, res) => {
 
         // Создаем новое сообщение
         const newMessage = {
-            name: authorName,
+            authorName,
             text,
             date: new Date()
         };

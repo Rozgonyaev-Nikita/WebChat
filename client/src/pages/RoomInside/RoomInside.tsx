@@ -37,7 +37,7 @@ export const RoomInside = () => {
         <h2>{countComment}</h2>
         <input type="text" value={message} onChange={e => setMessage(e.target.value)} />
         <button onClick={handlerAddMessage}>Отправить</button>
-        <List items={currentRoom.messages} renderItem={(message) => <MessageItem message={message}/>}/>
+        <List items={currentRoom.messages} renderItem={(message) => { return message.authorName === user ? <MessageItem whose='my' message={message} /> : <MessageItem whose='alien' message={message} />}}/>
     </div>
   )
 }
