@@ -3,7 +3,7 @@ import classes from './List.module.css'
 
 interface IListProps<T> {
     items: T[];
-    renderItem: (items: T) => React.ReactNode;
+    renderItem: (items: T, key?: any) => React.ReactNode;
 }
 
 export default function List<T> ({items, renderItem}: IListProps<T>) {

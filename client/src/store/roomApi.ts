@@ -25,7 +25,7 @@ export const roomApi = createApi({
           method: 'POST',
           body
         }),
-        invalidatesTags: [{type: 'Rooms', id: 'LIST'}]
+        // invalidatesTags: [{type: 'Rooms', id: 'LIST'}]
       }),
       addRoom: builder.mutation({
         query: (body) => ({

@@ -8,9 +8,13 @@ interface IMessageItemProps {
 }
 
 export const MessageItem: FC<IMessageItemProps> = ({message, whose}) => {
+  console.log(message.date)
+  const formattedDate = new Date(message.date).toLocaleString();
+  
   return (
     <div className={whose === 'my' ? classes.myMessage : classes.alienMessage}>
-        {message.text}
+        <h1>{message.text}</h1>
+        <h6>{formattedDate}</h6>
     </div>
   )
 }

@@ -152,7 +152,7 @@ app.get('/api/getAllrooms/:user', async (req, res) => {
   try {
     // Предполагается, что у вас есть функция, которая получает пользователя по ID
     const user = await Users.findById(userId);
-    console.log('user', user)
+    // console.log('user', user)
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -162,7 +162,7 @@ app.get('/api/getAllrooms/:user', async (req, res) => {
     const rooms = await Room.find({ _id: { $in: user.rooms } }); // Находим комнаты, идентификаторы которых находятся в массиве rooms
     res.json(rooms);
 
-    console.log('rooms', rooms);
+    // console.log('rooms', rooms);
   } catch (error) {
     console.error('Error fetching rooms:', error);
     res.status(500).json({ message: 'Server error' });
@@ -210,10 +210,9 @@ app.post('/api/addMessage', async(req, res) => {
 io.on('connection', (client) => {
     console.log('Клиент подключился!')
 
-    client.on('mes', (msg) => {
-      // const {message, room} = msg;
-      console.log(msg)
-      io.to(msg.room).emit('mess', msg)
+    client.on('enterInRooms', (rooms) => {
+      console.log('rooms', rooms)
+      rooms.map(room => client.join(room))
     })
 
     client.on('create', (room) => {
@@ -222,6 +221,14 @@ io.on('connection', (client) => {
       // const roomId = data.id;
       // roomConnections[roomid].push(client);
     })
+
+    client.on('sendEveryoneMessage', (msg) => {
+      const {text, roomId, authorName} = msg;
+      console.log(msg)
+      io.to(roomId).emit('chatMessage', {authorName, text, date: Date.now()})
+    })
+
+    
     client.on('disconnect', () => {
       console.log('Отключился');
     });

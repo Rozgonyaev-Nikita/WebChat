@@ -22,14 +22,14 @@ export const Chat = () => {
 
   
   const connectRoom = async() => {
-    // client.emit('create', room)
+    client.emit('create', room)
     // axios.post('http://localhost:5000/api/addRoom', {type: 'group', nameRoom: room, userId: user}).then(res => setRooms(prev => [...prev, res.data]))// обновить список, обновить data
     await addRoom({type: 'group', nameRoom: room, userId: user})
    }
 
-   const sendMessage = () => {
-    client.emit('mes', {message, room})
-   }
+  //  const sendMessage = () => {
+  //   client.emit('sendEveryoneMessage', {message, room})
+  //  }
 
    useEffect(() => {
     client.on('mess', (data) => {
@@ -69,6 +69,7 @@ export const Chat = () => {
     //   .then(res => setRooms(res.data))
     }
    }, [user])
+
    
 
   return (
@@ -76,8 +77,8 @@ export const Chat = () => {
       <input type="text" value={room} onChange={e => setRoom(e.target.value)}/>
       <button onClick={connectRoom}>Присоединиться</button>
        <br/>
-      <input type="text" value={message} onChange={(e) => setMessage(e.target.value)}/>
-      <button onClick={sendMessage}>Отправить</button>
+      {/* <input type="text" value={message} onChange={(e) => setMessage(e.target.value)}/>
+      <button onClick={sendMessage}>Отправить</button> */}
       {data !== undefined && <List items={data} renderItem={(room) => <RoomItem item={room} key={room['_id'].toString()}/>}/>}
     </div>
   )
