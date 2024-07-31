@@ -28,46 +28,12 @@ export const Chat = () => {
     await addRoom({type: 'group', nameRoom: room, userId: user})
    }
 
-  //  const sendMessage = () => {
-  //   client.emit('sendEveryoneMessage', {message, room})
-  //  }
-
-  //  useEffect(() => {
-  //   client.on('mess', (data) => {
-  //     setData2(data)
-  //   })
-  //  }, [rooms])
-
-  //  useEffect(() => {
-  //   const {message, room } = data2;
-  //   const isRoom = rooms.findIndex(r => r['_id'].toString() === room);
-  //   if (isRoom !== -1) {
-  //     // const cazan =  [...rooms, rooms[isRoom]: { ...rooms[isRoom], rooms[isRoom].messages: [...rooms[isRoom].messages, { text: message}] }]
-  //     const cazan = rooms.map((room) => {
-  //       if (room._id === rooms[isRoom]._id) {
-  //           return {
-  //               ...room,
-  //               messages: [...room.messages, { text: message }]
-  //           };
-  //       }});
-  //     setRooms([...cazan]);
-  //   } else if(data2.room === '') {
-  //     return;
-  //   } else {
-  //     console.log('такого нет')
-  //     // setRooms(prev => [...prev, { id: room, messages: [message] }]);
-  //   }
-  //  }, [data2])
+  
    useEffect(() => {
     
     if(!user){
       console.log('Пользователь не авторизирован')
       navigate('/avtorization');
-    } else{
-      // console.log('userr', user)
-      // @ts-ignore
-    //  axios.get<IRoom[]>('http://localhost:5000/api/getAllrooms', { params: {user} })
-    //   .then(res => setRooms(res.data))
     }
    }, [user])
 

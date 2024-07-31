@@ -1,23 +1,22 @@
 import axios from 'axios'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { SearchInput } from '../../../UI/SearchInput/SearchInput';
+import { useGetMyFriendsByLoginQuery } from '../../../store/userApi';
 
 export const MyFriends = () => {
+  const [inputValue, setInputValue] = useState('');
+  const {data} = useGetMyFriendsByLoginQuery(inputValue)
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const searchTerm  = searchParams.get('search');
-    axios.get('http://localhost:5000/api/friends', {
-      params: {
-          search: 'cazan123'
-      }
-  })
-  .then(response => {
-      console.log('Найденные пользователи:', response.data);
-  })
-  .catch(error => {
-      console.error('Ошибка:', error);
-  });
-  }, [])
+    console.log(searchTerm)
+    console.log('dt', data)
+  }, [data])
   return (
-    <div>MyFriends</div>
+    <div>
+      <SearchInput inputValue={inputValue} setInputValue={setInputValue}/>
+      <div>MyFriends</div>
+    </div>
   )
 }
+

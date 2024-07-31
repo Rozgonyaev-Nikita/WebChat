@@ -27,6 +27,9 @@ export const RoomInside = () => {
       console.log('mes', data)
       setMessages(prev => [...prev, data])
     })
+    return () => {
+      client.off('chatMessage')
+    }
   }, [client])
 
   if(data === undefined){

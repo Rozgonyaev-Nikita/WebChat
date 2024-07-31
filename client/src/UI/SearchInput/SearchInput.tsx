@@ -1,9 +1,12 @@
 import React, { FC, useEffect, useState } from 'react'
 import { IoIosSearch } from "react-icons/io";
 
+interface ISearchInput{
+  inputValue: string;
+  setInputValue: (inputValue: string) => void;
+}
 
-export const SearchInput = () => {
-    const [inputValue, setInputValue] = useState('');
+export const SearchInput: FC<ISearchInput> = ({inputValue, setInputValue}) => {
 
     const updateQueryString = (value: string) => {
         const params = new URLSearchParams(window.location.search);
@@ -19,7 +22,7 @@ export const SearchInput = () => {
     
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        const query = params.get('query') || '';
+        const query = params.get('search') || '';
         setInputValue(query);
     }, []);
     

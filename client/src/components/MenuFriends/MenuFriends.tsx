@@ -23,8 +23,6 @@ export const MenuFriends = () => {
     <div>
         <button className={toogle === 'left' ? classes.active : ''} onClick={myFrendsOpen}>Мои друзья</button>
         <button className={toogle === 'right' ? classes.active : ''} onClick={addFrendOpen}>Найти друзей</button>
-        <br/>
-        <SearchInput/>
     </div>
   )
 }

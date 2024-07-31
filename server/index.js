@@ -116,14 +116,16 @@ app.get('/api/friends', async (req, res) => {
       let users;
       if (search) {
           // Находим пользователей по имени, если оно предоставлено
-          users = await Users.find({ login: search });
+          users = await Users.find({ login: { $regex: search, $options: 'i' } });
+
       } else {
           // Находим всех пользователей, если имя не предоставлено
+          console.log('cazan')
           users = await Users.find();
       }
 
       if (users.length === 0) {
-          return res.status(404).json({ message: 'Пользователи не найдены' });
+          return res.json({ message: 'Пользователи не найдены' });
       }
       res.json(users); // Отправляем найденных пользователей
   } catch (err) {
