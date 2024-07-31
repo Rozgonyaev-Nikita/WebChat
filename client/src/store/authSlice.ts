@@ -1,13 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { IUser } from "../types/IRoom";
 
 interface IAuth {
   isAuth: boolean;
-  user: {
-    _id: string;
-    login: string;
-    password: string;
-    rooms: string[];
-  };
+  user: IUser;
 }
 const initialState: IAuth = {
   isAuth: false,
@@ -16,6 +12,11 @@ const initialState: IAuth = {
     login: "",
     password: "",
     rooms: [],
+    friends: {
+      myFriends: [],
+      request: [],
+      offer: [],
+    }
   },
 };
 

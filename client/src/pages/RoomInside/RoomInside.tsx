@@ -13,7 +13,6 @@ export const RoomInside = () => {
   const user = useAppSelector(u => u.auth.user._id);
   const {data} = useGetRoomApiByUserQuery(user);
   
-  console.log('data', data)
   const [addMessage, {isError}] = useAddMessageinRoomMutation();
 
   const navigate = useNavigate()
@@ -37,7 +36,8 @@ export const RoomInside = () => {
 
   // let currentRoom = data.find(d => d._id === roomName).messages;
 
-  const countComment = data.find(d => d._id === roomName).messages.length;
+  const countComment = data?.find(d => d._id === roomName)?.messages?.length ?? 0;
+
 
   const handlerAddMessage = async() => {
     const newMessage = { roomId: roomName, authorName: user, text: message };

@@ -8,7 +8,6 @@ interface IMessageItemProps {
 }
 
 export const MessageItem: FC<IMessageItemProps> = ({message, whose}) => {
-  console.log(message.date)
   const formattedDate = new Date(message.date).toLocaleString();
   
   return (

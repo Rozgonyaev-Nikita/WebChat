@@ -8,6 +8,9 @@ import { Chat } from './pages/Chat/Chat';
 import Registration from './pages/Regisatration/Regisatration';
 import Avtorization from './pages/Avtorization/Avtorization';
 import { RoomInside } from './pages/RoomInside/RoomInside';
+import { LayoutFriends } from './pages/LayoutFriends/LayoutFriends';
+import { MyFriends } from './pages/LayoutFriends/MyFriends/MyFriends';
+import { AddToFriends } from './pages/LayoutFriends/AddToFriends/AddToFriends';
 
 function App() {
   return (
@@ -17,6 +20,10 @@ function App() {
         <Route path='/registration' element={<Registration/>}/>
         <Route path='/avtorization' element={<Avtorization/>}/>
         <Route path='/room/:roomName' element={<RoomInside/>}/>
+        <Route path='/friends' element={<LayoutFriends/>}>
+          <Route index element={<MyFriends/>}/>
+          <Route path='/friends/addToFriends' element={<AddToFriends/>}/>
+        </Route>
       </Route>
     </Routes>
   );

@@ -32,7 +32,7 @@ const Avtorization = () => {
           dispatch(authAction(response.data));
           navigate("/");
         } else {
-          dispatch(authAction(response.data));
+          // dispatch(authAction(response.data));
           alert("Пробуй еще!!!");
         }
       })

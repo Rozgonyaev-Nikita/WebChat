@@ -6,7 +6,7 @@ import client from '../../socket'
 import axios from 'axios'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import { useNavigate } from 'react-router-dom'
-import { useAddRoomMutation, useGetRoomApiByUserQuery } from '../../store/roomApi'
+import { useAddMessageinRoomMutation, useAddRoomMutation, useGetRoomApiByUserQuery } from '../../store/roomApi'
 
 export const Chat = () => {
   const [rooms, setRooms] = useState<IRoom[]>([])
@@ -18,6 +18,7 @@ export const Chat = () => {
   const user = useAppSelector(u => u.auth.user._id)
   const { data, isLoading} = useGetRoomApiByUserQuery(user);
   const [addRoom, {isError}] = useAddRoomMutation();
+  const [addMessage] = useAddMessageinRoomMutation();
   const navigate = useNavigate();
 
   
@@ -31,32 +32,32 @@ export const Chat = () => {
   //   client.emit('sendEveryoneMessage', {message, room})
   //  }
 
-   useEffect(() => {
-    client.on('mess', (data) => {
-      setData2(data)
-    })
-   }, [rooms])
+  //  useEffect(() => {
+  //   client.on('mess', (data) => {
+  //     setData2(data)
+  //   })
+  //  }, [rooms])
 
-   useEffect(() => {
-    const {message, room } = data2;
-    const isRoom = rooms.findIndex(r => r['_id'].toString() === room);
-    if (isRoom !== -1) {
-      // const cazan =  [...rooms, rooms[isRoom]: { ...rooms[isRoom], rooms[isRoom].messages: [...rooms[isRoom].messages, { text: message}] }]
-      const cazan = rooms.map((room) => {
-        if (room._id === rooms[isRoom]._id) {
-            return {
-                ...room,
-                messages: [...room.messages, { text: message }]
-            };
-        }});
-      setRooms([...cazan]);
-    } else if(data2.room === '') {
-      return;
-    } else {
-      console.log('такого нет')
-      // setRooms(prev => [...prev, { id: room, messages: [message] }]);
-    }
-   }, [data2])
+  //  useEffect(() => {
+  //   const {message, room } = data2;
+  //   const isRoom = rooms.findIndex(r => r['_id'].toString() === room);
+  //   if (isRoom !== -1) {
+  //     // const cazan =  [...rooms, rooms[isRoom]: { ...rooms[isRoom], rooms[isRoom].messages: [...rooms[isRoom].messages, { text: message}] }]
+  //     const cazan = rooms.map((room) => {
+  //       if (room._id === rooms[isRoom]._id) {
+  //           return {
+  //               ...room,
+  //               messages: [...room.messages, { text: message }]
+  //           };
+  //       }});
+  //     setRooms([...cazan]);
+  //   } else if(data2.room === '') {
+  //     return;
+  //   } else {
+  //     console.log('такого нет')
+  //     // setRooms(prev => [...prev, { id: room, messages: [message] }]);
+  //   }
+  //  }, [data2])
    useEffect(() => {
     
     if(!user){
@@ -69,6 +70,12 @@ export const Chat = () => {
     //   .then(res => setRooms(res.data))
     }
    }, [user])
+
+   useEffect(() => {
+client.on('chatMessage', async(data) => {
+  await addMessage(data)
+})
+   }, [])
 
    
 

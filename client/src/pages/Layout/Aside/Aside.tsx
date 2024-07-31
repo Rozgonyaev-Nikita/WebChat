@@ -6,7 +6,7 @@ export const Aside = () => {
   return (
     <aside className={classes.aside}>
         <Link to='/'>Сообщения</Link>
-        <Link to='/frends'>Друзья</Link>
+        <Link to='/friends'>Друзья</Link>
     </aside>
   )
 }

@@ -48,11 +48,29 @@ const RoomScheme = mongoose.Schema({
 })
 
 const UserScheme = mongoose.Schema({
-  login: {type: String, required: true, unique: true},
-  password:{type: String, required: true},
-  rooms: [{type: String}],
-  active: {type: Boolean, default: false}
-}) 
+  login: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  rooms: [{ type: String }],
+  active: { type: Boolean, default: false },
+  friends: {
+    myFriends: [{ type: String }], 
+    request: [{ type: String }],   
+    offer: [{ type: String }],
+  }
+});
+// export interface IUser {
+//   _id: string;
+//   login: string;
+//   password: string;
+//   rooms: string[];
+//   friends: IFriends;
+// }
+
+// export interface IFriends {
+//   myFriends: string[];
+//   request: string[];
+//   offer: string[];
+// }
 
 export const Room = mongoose.model('room', RoomScheme)
 
@@ -90,6 +108,30 @@ app.post("/api/registration", async (req, res) => {
     res.send("Something Went Wrong");
   }
 });
+
+app.get('/api/friends', async (req, res) => {
+  const search = req.query.search; // Извлекаем имя из параметров запроса
+
+  try {
+      let users;
+      if (search) {
+          // Находим пользователей по имени, если оно предоставлено
+          users = await Users.find({ login: search });
+      } else {
+          // Находим всех пользователей, если имя не предоставлено
+          users = await Users.find();
+      }
+
+      if (users.length === 0) {
+          return res.status(404).json({ message: 'Пользователи не найдены' });
+      }
+      res.json(users); // Отправляем найденных пользователей
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Ошибка сервера' });
+  }
+});
+
 
 app.post('/api/addRoom', async (req, res) => { //вступление в комнату
   const { type, nameRoom, userId } = req.body;
