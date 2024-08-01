@@ -4,10 +4,10 @@ import { IUser } from "../types/IRoom";
 export const userApi = createApi({
     reducerPath: 'userApi',
     tagTypes: ['Users'],
-    baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/friends' }),
+    baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/addFriend' }),
     endpoints: (builder) => ({
-        getMyFriendsByLogin: builder.query<IUser[], string>({
-            query: (search) => `?search=${search}`,
+        getMyFriendsByLogin: builder.query<IUser[], {inputValue: string, myFriends: string}>({
+            query: ({inputValue, myFriends}) => `?search=${inputValue}&myFriends=${myFriends}`,
             providesTags: (result) => {
                 if (!Array.isArray(result)) {
                   return [{ type: 'Users', id: 'LIST' }];

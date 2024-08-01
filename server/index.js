@@ -4,6 +4,7 @@ import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 import { type } from 'node:os';
 import cors from 'cors';
+import morgan from 'morgan';
 
 const app = express();
 const server = createServer(app);
@@ -15,6 +16,7 @@ const io = new Server(server, {
 
 app.use(cors());
 app.use(express.json());
+app.use(morgan('dev'));
 
 mongoose.connect('mongodb://localhost:27017/chat')
 .then(() => console.log("Connected to yourDB-name database"))
@@ -109,23 +111,30 @@ app.post("/api/registration", async (req, res) => {
   }
 });
 
-app.get('/api/friends', async (req, res) => {
-  const search = req.query.search; // Извлекаем имя из параметров запроса
+app.get('/api/addFriend', async (req, res) => {
+  const {search, myFriends = ['']} = req.query;
 
+  console.log('myFriend', myFriends)
   try {
       let users;
       if (search) {
-          // Находим пользователей по имени, если оно предоставлено
-          users = await Users.find({ login: { $regex: search, $options: 'i' } });
+          
+          users = await Users.find({
+            $and: [
+                { login: { $regex: search, $options: 'i' } },
+                { _id: { $nin: JSON.parse(myFriends) } }
+            ]
+        });
 
       } else {
           // Находим всех пользователей, если имя не предоставлено
           console.log('cazan')
-          users = await Users.find();
+          users = await Users.find({ _id: { $nin: JSON.parse(myFriends) } });
       }
 
       if (users.length === 0) {
-          return res.json({ message: 'Пользователи не найдены' });
+          // return res.json({ message: 'Пользователи не найдены' });
+        return res.json([])
       }
       res.json(users); // Отправляем найденных пользователей
   } catch (err) {
@@ -133,7 +142,6 @@ app.get('/api/friends', async (req, res) => {
       res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
-
 
 app.post('/api/addRoom', async (req, res) => { //вступление в комнату
   const { type, nameRoom, userId } = req.body;
@@ -185,11 +193,6 @@ app.post('/api/addRoom', async (req, res) => { //вступление в ком�
 });
 
 app.get('/api/getAllrooms/:user', async (req, res) => {
-  // const users = req.params.user; // Получаем user из параметров
-  // console.log('req', users);
-  // const rooms = await Room.find({ users });
-  // res.json(rooms);
-  // console.log('rooms', rooms);
   const userId = req.params.user; // Получаем userId из параметров
   console.log('req', userId);
   
