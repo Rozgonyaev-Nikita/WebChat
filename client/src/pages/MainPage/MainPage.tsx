@@ -22,13 +22,6 @@ export const MainPage = () => {
       console.log('som')
     }
   }, [client])
-  useEffect(() => {
-    if(user.length !== 0){
-      console.log('enterInRooms')
-      client.emit('enterInRooms', user)
-    }
-    
-  }, [user])
   
   
   return (

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import {authAction} from '../../store/authSlice'
@@ -41,11 +41,19 @@ const Avtorization = () => {
       });
   };
 
-  // useEffect(() => {
-  //   if (auth) {
-  //     navigate(-1);
-  //   }
-  // }, []);
+  useEffect(() => {
+        const handleKeyDown = (e) => {
+            if(e.key === 'Enter'){
+              avtorization()
+            }
+            
+        }
+        window.addEventListener('keydown', handleKeyDown)
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+          };
+    }, [login, password])
 
   return (
     <div className={classes.avtorization}>
