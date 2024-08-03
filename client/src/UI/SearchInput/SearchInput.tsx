@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { IoIosSearch } from "react-icons/io";
+import { useSearchParams } from 'react-router-dom';
 
 interface ISearchInput{
   inputValue: string;
@@ -7,11 +8,13 @@ interface ISearchInput{
 }
 
 export const SearchInput: FC<ISearchInput> = ({inputValue, setInputValue}) => {
+  const [searchParams, setSearchParams] = useSearchParams()
 
     const updateQueryString = (value: string) => {
-        const params = new URLSearchParams(window.location.search);
-        params.set('search', value);
-        window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+        // const params = new URLSearchParams(window.location.search);
+        // params.set('search', value);
+        // window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+        setSearchParams({search: value})
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

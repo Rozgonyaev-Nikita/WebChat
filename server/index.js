@@ -19,13 +19,13 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 mongoose.connect('mongodb://localhost:27017/chat')
-.then(() => console.log("Connected to yourDB-name database"))
-.catch((err) => console.log(err));
+  .then(() => console.log("Connected to yourDB-name database"))
+  .catch((err) => console.log(err));
 
 const RoomScheme = mongoose.Schema({
-  type: {type: String, required: true},
-  nameRoom: {type: String},
-  users: [{type: String}],
+  type: { type: String, required: true },
+  nameRoom: { type: String },
+  users: [{ type: String }],
   messages: [
     {
       authorName: {
@@ -43,9 +43,9 @@ const RoomScheme = mongoose.Schema({
     },
   ],
   lastMessage: {
-    authorName: {type: String},
-    text: {type: String, default: ''},
-    date: {type: Date, default: Date.now},
+    authorName: { type: String },
+    text: { type: String, default: '' },
+    date: { type: Date, default: Date.now },
   }
 })
 
@@ -55,24 +55,11 @@ const UserScheme = mongoose.Schema({
   rooms: [{ type: String }],
   active: { type: Boolean, default: false },
   friends: {
-    myFriends: [{ type: String }], 
-    request: [{ type: String }],   
+    myFriends: [{ type: String }],
+    request: [{ type: String }],
     offer: [{ type: String }],
   }
 });
-// export interface IUser {
-//   _id: string;
-//   login: string;
-//   password: string;
-//   rooms: string[];
-//   friends: IFriends;
-// }
-
-// export interface IFriends {
-//   myFriends: string[];
-//   request: string[];
-//   offer: string[];
-// }
 
 export const Room = mongoose.model('room', RoomScheme)
 
@@ -111,35 +98,63 @@ app.post("/api/registration", async (req, res) => {
   }
 });
 
-app.get('/api/addFriend', async (req, res) => {
-  const {search, myFriends = ['']} = req.query;
+app.get('/api/friends/myFriends', async (req, res) => {
+  const { search, userId } = req.query;
+try {
+  const user = await Users.findOne({ _id: userId })
+  let myFriends;
+  console.log('search' , search)
+
+  if (search) {
+    console.log('3')
+    myFriends = await Users.find({
+      $and: [
+        { _id: { $in: user.friends.myFriends } },
+        { login: { $regex: search, $options: 'i' } }
+      ]
+    })
+  } else{
+    myFriends = await Users.find({ _id: { $in: user.friends.myFriends } })
+  }
+  res.json(myFriends)
+
+
+} catch (error) {
+  console.error(err);
+    res.status(500).json({ message: 'Ошибка сервера' });
+}
+
+});
+
+app.get('/api/friends/addFriend', async (req, res) => {
+  const { search, myFriends = [''] } = req.query;
 
   console.log('myFriend', myFriends)
   try {
-      let users;
-      if (search) {
-          
-          users = await Users.find({
-            $and: [
-                { login: { $regex: search, $options: 'i' } },
-                { _id: { $nin: JSON.parse(myFriends) } }
-            ]
-        });
+    let users;
+    if (search) {
 
-      } else {
-          // Находим всех пользователей, если имя не предоставлено
-          console.log('cazan')
-          users = await Users.find({ _id: { $nin: JSON.parse(myFriends) } });
-      }
+      users = await Users.find({
+        $and: [
+          { login: { $regex: search, $options: 'i' } },
+          { _id: { $nin: JSON.parse(myFriends) } }
+        ]
+      });
 
-      if (users.length === 0) {
-          // return res.json({ message: 'Пользователи не найдены' });
-        return res.json([])
-      }
-      res.json(users); // Отправляем найденных пользователей
+    } else {
+      // Находим всех пользователей, если имя не предоставлено
+      console.log('cazan')
+      users = await Users.find({ _id: { $nin: JSON.parse(myFriends) } });
+    }
+
+    if (users.length === 0) {
+      // return res.json({ message: 'Пользователи не найдены' });
+      return res.json([])
+    }
+    res.json(users); // Отправляем найденных пользователей
   } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Ошибка сервера' });
+    console.error(err);
+    res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
 
@@ -147,55 +162,55 @@ app.post('/api/addRoom', async (req, res) => { //вступление в ком�
   const { type, nameRoom, userId } = req.body;
 
   try {
-      // Найти существующую комнату по типу и имени (если это группа)
-      let room = await Room.findOne({ type, nameRoom });
+    // Найти существующую комнату по типу и имени (если это группа)
+    let room = await Room.findOne({ type, nameRoom });
 
-      // Если комната не найдена, создайте новую
-      if (!room) {
-          room = new Room({
-              type,
-              nameRoom,
-              users: [userId], // добавление пользователя
-              messages: [],
-              lastMessage: null,
-          });
-      } else {
-          // Если комната существует, добавьте пользователя, если его там нет
-          if (!room.users.includes(userId)) {
-              room.users.push(userId);
-          }
+    // Если комната не найдена, создайте новую
+    if (!room) {
+      room = new Room({
+        type,
+        nameRoom,
+        users: [userId], // добавление пользователя
+        messages: [],
+        lastMessage: null,
+      });
+    } else {
+      // Если комната существует, добавьте пользователя, если его там нет
+      if (!room.users.includes(userId)) {
+        room.users.push(userId);
       }
-
-      // Сохраните (или обновите) комнату
-      await room.save();
-      Users.findOne({ _id: userId })
-  .then(user => {
-    if (!user) {
-      throw new Error('User not found');
     }
-    
-    user.rooms.push(room['_id']);
-    
-    return user.save(); // возвращаем промис сохранения
-  })
-  .then(updatedUser => {
-    console.log('User updated successfully', updatedUser);
-  })
-  .catch(err => {
-    console.error('Error occurred:', err);
-  });
 
-      res.status(200).json(room);
+    // Сохраните (или обновите) комнату
+    await room.save();
+    Users.findOne({ _id: userId })
+      .then(user => {
+        if (!user) {
+          throw new Error('User not found');
+        }
+
+        user.rooms.push(room['_id']);
+
+        return user.save(); // возвращаем промис сохранения
+      })
+      .then(updatedUser => {
+        console.log('User updated successfully', updatedUser);
+      })
+      .catch(err => {
+        console.error('Error occurred:', err);
+      });
+
+    res.status(200).json(room);
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Ошибка сервера' });
+    console.error(error);
+    res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
 
 app.get('/api/getAllrooms/:user', async (req, res) => {
   const userId = req.params.user; // Получаем userId из параметров
   console.log('req', userId);
-  
+
   try {
     // Предполагается, что у вас есть функция, которая получает пользователя по ID
     const user = await Users.findById(userId);
@@ -216,69 +231,69 @@ app.get('/api/getAllrooms/:user', async (req, res) => {
   }
 });
 
-app.post('/api/addMessage', async(req, res) => {
+app.post('/api/addMessage', async (req, res) => {
   const { roomId, authorName, text } = req.body;
 
-    if (!roomId || !authorName || !text) {
-        return res.status(400).json({ message: 'roomId, authorName and text are required' });
+  if (!roomId || !authorName || !text) {
+    return res.status(400).json({ message: 'roomId, authorName and text are required' });
+  }
+
+  try {
+    // Находим комнату по ID
+    const room = await Room.findById(roomId);
+
+    if (!room) {
+      return res.status(404).json({ message: 'Room not found' });
     }
 
-    try {
-        // Находим комнату по ID
-        const room = await Room.findById(roomId);
-        
-        if (!room) {
-            return res.status(404).json({ message: 'Room not found' });
-        }
+    // Создаем новое сообщение
+    const newMessage = {
+      authorName,
+      text,
+      date: new Date()
+    };
 
-        // Создаем новое сообщение
-        const newMessage = {
-            authorName,
-            text,
-            date: new Date()
-        };
+    // Добавляем новое сообщение в массив messages
+    room.messages.push(newMessage);
+    // Обновляем поле lastMessage
+    room.lastMessage = newMessage;
 
-        // Добавляем новое сообщение в массив messages
-        room.messages.push(newMessage);
-        // Обновляем поле lastMessage
-        room.lastMessage = newMessage;
+    // Сохраняем изменения в комнате
+    await room.save();
 
-        // Сохраняем изменения в комнате
-        await room.save();
-
-        // Отправляем ответ
-        return res.status(200).json({ message: 'Message added successfully', room });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Server error' });
-    }
+    // Отправляем ответ
+    return res.status(200).json({ message: 'Message added successfully', room });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error' });
+  }
 })
 
 io.on('connection', (client) => {
-    console.log('Клиент подключился!')
+  console.log('Клиент подключился!')
 
-    client.on('enterInRooms', (rooms) => {
-      console.log('rooms', rooms)
-      rooms.map(room => client.join(room))
-    })
+  client.on('enterInRooms', (rooms) => {
+    console.log('rooms', rooms)
+    rooms.map(room => client.join(room))
+  })
 
-    client.on('create', (room) => {
-      console.log(room)
-      client.join(room)
-      // const roomId = data.id;
-      // roomConnections[roomid].push(client);
-    })
+  client.on('create', (room) => {
+    console.log(room)
+    client.join(room)
+    // const roomId = data.id;
+    // roomConnections[roomid].push(client);
+  })
 
-    client.on('sendEveryoneMessage', (msg) => {
-      const {text, roomId, authorName} = msg;
-      console.log(msg)
-      io.to(roomId).emit('chatMessage', {authorName, text, date: Date.now()})
-    })
+  client.on('sendEveryoneMessage', (msg) => {
+    const { text, roomId, authorName } = msg;
+    console.log(msg)
+    io.to(roomId).emit('chatMessage', { authorName, text, date: Date.now() })
+  })
 
-    
-    client.on('disconnect', () => {
-      console.log('Отключился');
-    });
+
+  client.on('disconnect', () => {
+    console.log('Отключился');
+  });
 })
 
 const PORT = 5000;

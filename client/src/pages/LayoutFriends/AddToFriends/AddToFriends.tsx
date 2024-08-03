@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useGetMyFriendsByLoginQuery } from '../../../store/userApi';
+import { useGetAllUsersByLoginQuery } from '../../../store/userApi';
 import { SearchInput } from '../../../UI/SearchInput/SearchInput';
 import List from '../../../components/List/List';
 import { UserCard } from '../../../UI/UserCard/UserCard';
@@ -9,7 +9,7 @@ export const AddToFriends = () => {
   const user = useAppSelector(state => state.auth.user)
   console.log('myFriends', )
   const [inputValue, setInputValue] = useState('');
-  const {data} = useGetMyFriendsByLoginQuery({inputValue, myFriends: JSON.stringify([...user.friends.myFriends, user._id])})
+  const {data} = useGetAllUsersByLoginQuery({inputValue, myFriends: JSON.stringify([...user.friends.myFriends, user._id])})
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const searchTerm  = searchParams.get('search');
