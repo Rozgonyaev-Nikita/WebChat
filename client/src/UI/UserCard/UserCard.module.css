@@ -1,4 +1,6 @@
 .card{
     border: 1px solid black;
     background-color: aqua;
+    display: flex;
+    justify-content: space-between;
 }

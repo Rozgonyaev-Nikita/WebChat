@@ -11,6 +11,7 @@ export const UserCard: FC<IUserCard> = ({user, isAddFriend}) => {
   return (
     <div className={classes.card}>
         <h1>{user.login}</h1>
+        {isAddFriend && <button>Добавить</button>}
     </div>
   )
 }
