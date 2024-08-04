@@ -55,9 +55,9 @@ const UserScheme = mongoose.Schema({
   rooms: [{ type: String }],
   active: { type: Boolean, default: false },
   friends: {
-    myFriends: [{ type: String }],
-    request: [{ type: String }],
-    offer: [{ type: String }],
+    myFriends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+    request: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+    offer: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
   }
 });
 
@@ -100,33 +100,26 @@ app.post("/api/registration", async (req, res) => {
 
 app.get('/api/friends/myFriends', async (req, res) => {
   const { search, userId } = req.query;
-try {
-  const user = await Users.findOne({ _id: userId })
-  let myFriends;
-  console.log('search' , search)
+  try {
+    const user = await Users.findOne({_id : userId}).populate('friends.myFriends');
+    console.log('us', user)
+    let myFriends = user.friends.myFriends;
 
-  if (search) {
-    console.log('3')
-    myFriends = await Users.find({
-      $and: [
-        { _id: { $in: user.friends.myFriends } },
-        { login: { $regex: search, $options: 'i' } }
-      ]
-    })
-  } else{
-    myFriends = await Users.find({ _id: { $in: user.friends.myFriends } })
-  }
-  res.json(myFriends)
+    if (search) {
+      myFriends = myFriends.filter(friend => 
+        friend.login.match(new RegExp(search, 'i'))
+      );
+    }
 
+    res.json(myFriends);
 
-} catch (error) {
-  console.error(err);
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Ошибка сервера' });
-}
-
+  }
 });
 
-app.get('/api/friends/addFriend', async (req, res) => {
+app.get('/api/friends/listAddFriend', async (req, res) => {
   const { search, myFriends = [''] } = req.query;
 
   console.log('myFriend', myFriends)
@@ -157,6 +150,17 @@ app.get('/api/friends/addFriend', async (req, res) => {
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
+app.post('/api/friends/addNewFriend', async(req, res) => {
+  const { myId, friendId } = req.body;
+  const myUser = await Users.findOne({ _id: myId });
+  console.log('myUser', myUser)
+  const fiendUser = await Users.findOne({ _id: friendId });
+  console.log('fiendUser', fiendUser)
+  
+  myUser.friends.myFriends.push(fiendUser);
+  myUser.save();
+  res.json(myUser)
+})
 
 app.post('/api/addRoom', async (req, res) => { //вступление в комнату
   const { type, nameRoom, userId } = req.body;

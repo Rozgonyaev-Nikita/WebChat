@@ -7,7 +7,7 @@ export const userApi = createApi({
     baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/friends' }),
     endpoints: (builder) => ({
         getAllUsersByLogin: builder.query<IUser[], {inputValue: string, myFriends: string}>({
-            query: ({inputValue, myFriends}) => `addFriend?search=${inputValue}&myFriends=${myFriends}`,
+            query: ({inputValue, myFriends}) => `listAddFriend?search=${inputValue}&myFriends=${myFriends}`,
             providesTags: (result) => {
                 if (!Array.isArray(result)) {
                   return [{ type: 'Users', id: 'LIST' }];

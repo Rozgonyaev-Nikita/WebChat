@@ -39,7 +39,7 @@ export const MyFriends = () => {
 
   useEffect(() => {
     const st = searchParams.get('search') || '';
-    console.log(st);
+    console.log('st', st);
     setSearch(st);
   }, [inputValue])
 
