@@ -11,6 +11,7 @@ import { RoomInside } from './pages/RoomInside/RoomInside';
 import { LayoutFriends } from './pages/LayoutFriends/LayoutFriends';
 import { MyFriends } from './pages/LayoutFriends/MyFriends/MyFriends';
 import { AddToFriends } from './pages/LayoutFriends/AddToFriends/AddToFriends';
+import { ShowApplication } from './pages/LayoutFriends/ShowApplication/ShowApplication';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path='/friends' element={<LayoutFriends/>}>
           <Route index element={<MyFriends/>}/>
           <Route path='/friends/addToFriends' element={<AddToFriends/>}/>
+          <Route path='/friends/friendRequests' element={<ShowApplication/>}/>
         </Route>
       </Route>
     </Routes>

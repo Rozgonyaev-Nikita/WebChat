@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { IUser } from '../../types/IRoom'
 import classes from './UserCard.module.css'
 import axios from 'axios';
+import { usePatchFriendsMutation } from '../../store/userApi';
 
 interface IUserCard {
     myUser?: string;
@@ -10,9 +11,17 @@ interface IUserCard {
 }
 
 export const UserCard: FC<IUserCard> = ({myUser, user, isAddFriend}) => {
+  const [addFriend] = usePatchFriendsMutation()
 
-  const addnewFriend = () => {
-    axios.post('http://localhost:5000/api/friends/addNewFriend', {myId: myUser, friendId: user._id}).then(res => console.log(res.data))
+  const addnewFriend = async() => {
+    try {
+      await addFriend({myId: myUser, friendId: user._id, action: 'sendInvitation'}).unwrap();
+      console.log('успех')
+    } catch (error) {
+      console.log('ошибка', error)
+    }
+    
+   
   }
 
   return (

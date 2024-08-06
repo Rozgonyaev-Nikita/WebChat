@@ -27,3 +27,7 @@ export interface IFriends {
     request: string[];
     offer: string[];
 }
+
+export interface IActionAdd {
+    action: 'sendInvitation' | '';
+}

@@ -56,7 +56,7 @@ const UserScheme = mongoose.Schema({
   active: { type: Boolean, default: false },
   friends: {
     myFriends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
-    request: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+    wait: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
     offer: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
   }
 });
@@ -101,12 +101,12 @@ app.post("/api/registration", async (req, res) => {
 app.get('/api/friends/myFriends', async (req, res) => {
   const { search, userId } = req.query;
   try {
-    const user = await Users.findOne({_id : userId}).populate('friends.myFriends');
+    const user = await Users.findOne({ _id: userId }).populate('friends.myFriends');
     console.log('us', user)
     let myFriends = user.friends.myFriends;
 
     if (search) {
-      myFriends = myFriends.filter(friend => 
+      myFriends = myFriends.filter(friend =>
         friend.login.match(new RegExp(search, 'i'))
       );
     }
@@ -119,25 +119,28 @@ app.get('/api/friends/myFriends', async (req, res) => {
   }
 });
 
-app.get('/api/friends/listAddFriend', async (req, res) => {
-  const { search, myFriends = [''] } = req.query;
 
-  console.log('myFriend', myFriends)
+app.get('/api/friends/listAddFriend', async (req, res) => {
+  const { search, id } = req.query;
   try {
     let users;
+    const user = await Users.findOne({_id: id})
+    const otherPeople = [...user.friends.myFriends, ...user.friends.offer, ...user.friends.wait, user._id ]
+    console.log('user', user)
+
     if (search) {
 
-      users = await Users.find({
+      users = await user.find({
         $and: [
           { login: { $regex: search, $options: 'i' } },
-          { _id: { $nin: JSON.parse(myFriends) } }
+          { _id: { $nin: otherPeople} }
         ]
       });
 
     } else {
       // Находим всех пользователей, если имя не предоставлено
       console.log('cazan')
-      users = await Users.find({ _id: { $nin: JSON.parse(myFriends) } });
+      users = await Users.find({ _id: { $nin: otherPeople } });
     }
 
     if (users.length === 0) {
@@ -150,17 +153,41 @@ app.get('/api/friends/listAddFriend', async (req, res) => {
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
-app.post('/api/friends/addNewFriend', async(req, res) => {
-  const { myId, friendId } = req.body;
-  const myUser = await Users.findOne({ _id: myId });
-  console.log('myUser', myUser)
-  const fiendUser = await Users.findOne({ _id: friendId });
-  console.log('fiendUser', fiendUser)
-  
-  myUser.friends.myFriends.push(fiendUser);
-  myUser.save();
-  res.json(myUser)
-})
+
+app.get('/api/friends/friendRequests', async (req, res) => {
+  const {id} = req.query;
+
+  const user = await Users.findOne({_id: id}).populate('friends.wait');
+  res.json(user.friends.wait)
+});
+
+app.patch('/api/friends/addNewFriend', async (req, res) => {
+  try {
+    const { myId, friendId, action } = req.body; 
+    const myUser = await Users.findOne({ _id: myId }); 
+    const friendUser = await Users.findOne({ _id: friendId }); 
+
+
+    if (!myUser || !friendUser) {
+      throw new Error('Пользователи не найдены');
+    }
+
+    if (myUser.friends.offer.find(p => p.toString() === friendId) || friendUser.friends.wait.find(p => p.toString() === myId)) {
+      console.log('ошибка')
+      throw new Error('Запрос уже был отправлен')
+    }
+
+    if (action === 'sendInvitation') {
+      myUser.friends.offer.push(friendUser);
+      friendUser.friends.wait.push(myUser);
+    }
+
+    await myUser.save();
+    await friendUser.save();
+    res.json(myUser);
+  } catch (error) { res.status(400).send({ error: error.message }); }
+});
+
 
 app.post('/api/addRoom', async (req, res) => { //вступление в комнату
   const { type, nameRoom, userId } = req.body;
