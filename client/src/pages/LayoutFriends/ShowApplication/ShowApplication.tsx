@@ -12,22 +12,18 @@ export const ShowApplication = () => {
     const myUser = useAppSelector(u => u.auth.user._id)
 
     useEffect(() => {
-        try {
             axios.get('http://localhost:5000/api/friends/friendRequests', {
                 params: {
                     id: myUser
                 }
-            }).then(res => {
-                setUsers(res.data)
-            })
-        } catch (error) {
-            console.log(error)
-        }
+            }).then(res => setUsers(res.data))
+              .catch(error => console.log(error))
+        
     }, [])
     
   return (
     <div>
-        <List items={users} renderItem={(user) => <UserCard key={user._id} user={user} myUser={myUser} isAddFriend={false}/>}/>
+        <List items={users} renderItem={(user) => <UserCard key={user._id} user={user} myUser={myUser} type='wait'/>}/>
     </div>
   )
 }

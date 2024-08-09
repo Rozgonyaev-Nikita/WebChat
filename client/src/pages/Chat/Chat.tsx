@@ -40,7 +40,7 @@ export const Chat = () => {
    useEffect(() => {
 client.on('chatMessage', async(data) => {
   await addMessage(data)
-})
+}) 
    }, [])
 
    

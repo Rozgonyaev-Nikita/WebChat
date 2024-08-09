@@ -122,7 +122,12 @@ app.post("/api/registration", async (req, res) => {
 
 app.get('/api/friends/myFriends', async (req, res) => {
   const { search, userId } = req.query;
+  if (!userId) { 
+    return res.status(401).json({ message: 'Не авторизирован' }); 
+  }
+  console.log('userId', userId)
   try {
+    
     const user = await Users.findOne({ _id: userId }).populate('friends.myFriends');
     console.log('us', user)
     let myFriends = user.friends.myFriends;
@@ -136,13 +141,16 @@ app.get('/api/friends/myFriends', async (req, res) => {
     res.json(myFriends);
 
   } catch (error) {
-    console.error(error);
+    console.log('error', error);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 });
 
 app.get('/api/friends/listAddFriend', async (req, res) => {
   const { search, id } = req.query;
+  if (!id) { 
+    return res.status(401).json({ message: 'Не авторизирован' }); 
+  }
   try {
     let users;
     const user = await Users.findOne({_id: id})
@@ -177,9 +185,17 @@ app.get('/api/friends/listAddFriend', async (req, res) => {
 
 app.get('/api/friends/friendRequests', async (req, res) => {
   const {id} = req.query;
+  if (!id) { 
+    return res.status(401).json({ message: 'Не авторизирован' }); 
+  }
 
-  const user = await Users.findOne({_id: id}).populate('friends.wait');
-  res.json(user.friends.wait)
+  try {
+    const user = await Users.findOne({_id: id}).populate('friends.wait');// возможно при закрытии ошибка тут
+    res.json(user.friends.wait)
+  } catch (error) {
+    console.log(error)
+  }
+  
 });
 
 app.patch('/api/friends/addNewFriend', async (req, res) => {
@@ -201,6 +217,17 @@ app.patch('/api/friends/addNewFriend', async (req, res) => {
     if (action === 'sendInvitation') {
       myUser.friends.offer.push(friendUser);
       friendUser.friends.wait.push(myUser);
+    } else if (action === 'acceptOffer') {
+      //удаляем заявку и предложение в друзья
+      const myIndex = myUser.friends.wait.findIndex(u => u._id === friendUser._id)
+      const friendIndex = friendUser.friends.offer.findIndex(u => u._id === myUser._id)
+
+      myUser.friends.wait.splice(myIndex, 1)
+      friendUser.friends.offer.splice(friendIndex, 1)
+
+      //добавляем в друзья
+      myUser.friends.myFriends.push(friendUser);
+      friendUser.friends.myFriends.push(myUser);
     }
 
     await myUser.save();
@@ -335,6 +362,10 @@ io.on('connection', (client) => {
     const _id = rom._id.toString()
     console.log(' _id', _id)
     client.join(_id)
+  })
+
+  client.on('refreshFriends', () => {
+    client.broadcast.emit('refreshRoom')
   })
 
   client.on('sendEveryoneMessage', (msg) => {
