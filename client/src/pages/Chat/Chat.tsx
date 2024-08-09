@@ -23,9 +23,9 @@ export const Chat = () => {
 
   
   const connectRoom = async() => {
-    client.emit('create', room)
     // axios.post('http://localhost:5000/api/addRoom', {type: 'group', nameRoom: room, userId: user}).then(res => setRooms(prev => [...prev, res.data]))// обновить список, обновить data
     await addRoom({type: 'group', nameRoom: room, userId: user})
+    client.emit('create', room)
    }
 
   

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export const useBack = () => {
+const useBack = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,3 +19,5 @@ export const useBack = () => {
         };
     }, [navigate]); // Добавили `navigate` в зависимости
 };
+
+export default useBack;

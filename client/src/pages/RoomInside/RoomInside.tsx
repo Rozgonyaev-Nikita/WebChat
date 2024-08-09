@@ -18,6 +18,7 @@ export const RoomInside = () => {
       room: data?.find((post) => post._id === roomName),
     }),
   })
+  console.log('rm', room)
   
   const [addMessage, {isError}] = useAddMessageinRoomMutation();
 
@@ -47,6 +48,7 @@ export const RoomInside = () => {
   const handlerAddMessage = async() => {
     const newMessage = { roomId: roomName, authorName: user, text: message };
     await addMessage(newMessage).unwrap();
+    console.log('отправка')
     client.emit('sendEveryoneMessage', newMessage)
     setMessage('')
   } 

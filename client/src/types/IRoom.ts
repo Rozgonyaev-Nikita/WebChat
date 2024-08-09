@@ -26,6 +26,7 @@ export interface IFriends {
     myFriends: string[];
     request: string[];
     offer: string[];
+    wait: string[]
 }
 
 export interface IActionAdd {

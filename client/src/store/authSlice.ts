@@ -16,6 +16,7 @@ const initialState: IAuth = {
       myFriends: [],
       request: [],
       offer: [],
+      wait: [],
     }
   },
 };

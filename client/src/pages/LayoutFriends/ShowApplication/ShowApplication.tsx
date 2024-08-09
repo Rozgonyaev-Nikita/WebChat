@@ -18,7 +18,6 @@ export const ShowApplication = () => {
                     id: myUser
                 }
             }).then(res => {
-                console.log('ty',res.data)
                 setUsers(res.data)
             })
         } catch (error) {

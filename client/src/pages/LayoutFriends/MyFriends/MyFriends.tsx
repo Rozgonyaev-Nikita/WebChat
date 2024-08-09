@@ -15,31 +15,8 @@ export const MyFriends = () => {
   const userId = useAppSelector(user => user.auth.user._id)
   const {data = []} = useGetMyFriendsByLoginQuery({search, userId});
 
-    // useEffect(() => {
-    //     console.log('бумь');
-    //     console.log('searchParams = ',searchParams)
-    //     const st = searchParams.get('search') || ''
-    //     console.log(st)
-    //     setSearch(st); // Устанавливаем поиск на значение параметра или пустую строку
-    //         axios.get('http://localhost:5000/api/friends/myFriends', {
-    //             params: {
-    //                 search: st,
-    //                 userId: userId,
-    //             },
-    //         })
-    //         .then(response => {
-    //             console.log('Найденные пользователи:', response.data);
-    //             setData(response.data)
-    //         })
-    //         .catch(error => {
-    //             console.error('Ошибка:', error);
-    //         });
-        
-    // }, [inputValue]); // Устанавливаем зависимость на location.search 
-
   useEffect(() => {
     const st = searchParams.get('search') || '';
-    console.log('st', st);
     setSearch(st);
   }, [inputValue])
 

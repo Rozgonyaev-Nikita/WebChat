@@ -5,7 +5,7 @@ import { useAppSelector } from '../../hooks/reduxHooks';
 
 
 export const MainPage = () => {
-  const user = useAppSelector(u => u.auth.user.rooms);
+  const rooms = useAppSelector(u => u.auth.user.rooms);
   useEffect(() => {
     
     client.on('connect', () => {
@@ -22,6 +22,14 @@ export const MainPage = () => {
       console.log('som')
     }
   }, [client])
+
+  useEffect(() => {
+    if(rooms.length !== 0){
+      console.log('enterInRooms')
+      client.emit('enterInRooms', rooms)
+    }
+
+  }, [rooms])
   
   
   return (

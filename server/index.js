@@ -5,6 +5,9 @@ import mongoose from 'mongoose';
 import { type } from 'node:os';
 import cors from 'cors';
 import morgan from 'morgan';
+import bcrypt from 'bcrypt'
+
+const saltRounds = 10;
 
 const app = express();
 const server = createServer(app);
@@ -66,29 +69,48 @@ export const Room = mongoose.model('room', RoomScheme)
 export const Users = mongoose.model('user', UserScheme);
 
 
-app.get("/api/getUser", ({ query: { login, password } }, res) => {
-  Users.findOne({ login, password }).then((user) => {
-    if (user !== null) {
-      res.json(user);
-      // console.log(user)
-      // res.json(true);
+app.get("/api/getUser", async(req, res) => {
+  const { login, password } = req.query;
+
+  try {
+    // Находим пользователя по логину
+    const user = await Users.findOne({ login });
+
+    if (user) {
+      // Сравниваем введённый пароль с хешем, хранящимся в базе данных
+      const match = await bcrypt.compare(password, user.password);
+
+      if (match) {
+        // отправляем все кроме пароля
+        const { password, ...userWithoutPassword } = user.toObject(); 
+        res.json(userWithoutPassword);
+      } else {
+        // Пароли не совпадают
+        res.json(false);
+      }
     } else {
+      // Пользователь не найден
       res.json(false);
     }
-  });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+
   console.log(login, password);
 });
 
 app.post("/api/registration", async (req, res) => {
   try {
-    console.log('post')
-    const users = new Users(req.body);
+    const { password, ...otherData } = req.body;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const users = new Users({...otherData, password: hashedPassword});
     console.log("users", req.body);
     let result = await users.save();
     result = result.toObject();
     if (result) {
-      delete result.password;
-      res.send(req.body);
+      // delete result.password;
+      res.send({...otherData, password: hashedPassword});
       console.log(result);
     } else {
       console.log("Posts already register");
@@ -119,14 +141,12 @@ app.get('/api/friends/myFriends', async (req, res) => {
   }
 });
 
-
 app.get('/api/friends/listAddFriend', async (req, res) => {
   const { search, id } = req.query;
   try {
     let users;
     const user = await Users.findOne({_id: id})
-    const otherPeople = [...user.friends.myFriends, ...user.friends.offer, ...user.friends.wait, user._id ]
-    console.log('user', user)
+    const otherPeople = [...user.friends.myFriends, ...user.friends.wait, user._id ]
 
     if (search) {
 
@@ -135,7 +155,7 @@ app.get('/api/friends/listAddFriend', async (req, res) => {
           { login: { $regex: search, $options: 'i' } },
           { _id: { $nin: otherPeople} }
         ]
-      });
+      }).populate('friends.offer');
 
     } else {
       // Находим всех пользователей, если имя не предоставлено
@@ -147,6 +167,7 @@ app.get('/api/friends/listAddFriend', async (req, res) => {
       // return res.json({ message: 'Пользователи не найдены' });
       return res.json([])
     }
+    console.log('users', users)
     res.json(users); // Отправляем найденных пользователей
   } catch (err) {
     console.error(err);
@@ -308,16 +329,17 @@ io.on('connection', (client) => {
     rooms.map(room => client.join(room))
   })
 
-  client.on('create', (room) => {
-    console.log(room)
-    client.join(room)
-    // const roomId = data.id;
-    // roomConnections[roomid].push(client);
+  client.on('create', async(room) => {
+    const rom = await Room.findOne({nameRoom: room})
+    console.log('room', room)
+    const _id = rom._id.toString()
+    console.log(' _id', _id)
+    client.join(_id)
   })
 
   client.on('sendEveryoneMessage', (msg) => {
     const { text, roomId, authorName } = msg;
-    console.log(msg)
+    console.log('msg', msg)
     io.to(roomId).emit('chatMessage', { authorName, text, date: Date.now() })
   })
 
