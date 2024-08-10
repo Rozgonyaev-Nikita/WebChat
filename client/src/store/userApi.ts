@@ -30,6 +30,18 @@ export const userApi = createApi({
                       { type: 'Users', id: 'LIST' },
                     ];
                   },}),
+                  getWaitFriends: builder.query<IUser[], {search: string, userId: string}>({
+                    query: ({search, userId}) => `friendRequests?search=${search}&id=${userId}`,
+                    providesTags: (result) => {
+                        if (!Array.isArray(result)) {
+                          return [{ type: 'Users', id: 'LIST' }];
+                        }
+                        
+                        return [
+                          ...result.map(({ _id }) => ({ type: 'Users', id: _id } as const)),
+                          { type: 'Users', id: 'LIST' },
+                        ];
+                      },}),
               patchFriends: builder.mutation<IUser[], {myId: string; friendId: string; action: string}>({
                 query: (body) => ({
                   url: 'addNewFriend',
@@ -41,4 +53,4 @@ export const userApi = createApi({
     })
 });
 
-export const { useGetAllUsersByLoginQuery, useGetMyFriendsByLoginQuery, usePatchFriendsMutation } = userApi;
+export const { useGetAllUsersByLoginQuery, useGetMyFriendsByLoginQuery, usePatchFriendsMutation, useGetWaitFriendsQuery } = userApi;

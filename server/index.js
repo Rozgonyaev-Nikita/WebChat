@@ -158,7 +158,7 @@ app.get('/api/friends/listAddFriend', async (req, res) => {
 
     if (search) {
 
-      users = await user.find({
+      users = await Users.find({
         $and: [
           { login: { $regex: search, $options: 'i' } },
           { _id: { $nin: otherPeople} }
@@ -183,15 +183,31 @@ app.get('/api/friends/listAddFriend', async (req, res) => {
   }
 });
 
+// app.get('/api/friends/friendRequests', async (req, res) => {
+//   const {id} = req.query;
+//   if (!id) { 
+//     return res.status(401).json({ message: 'Не авторизирован' }); 
+//   }
+
+//   try {
+//     const user = await Users.findOne({_id: id}).populate('friends.wait');// возможно при закрытии ошибка тут
+//     console.log(user.friends.wait)
+//     res.json(user.friends.wait)
+//   } catch (error) {
+//     console.log(error)
+//   }
+  
+// });
 app.get('/api/friends/friendRequests', async (req, res) => {
-  const {id} = req.query;
+  const {search, id} = req.query;
   if (!id) { 
     return res.status(401).json({ message: 'Не авторизирован' }); 
   }
-
   try {
-    const user = await Users.findOne({_id: id}).populate('friends.wait');// возможно при закрытии ошибка тут
-    res.json(user.friends.wait)
+    const user = await Users.findOne({_id: id}).populate('friends.wait');
+    const waitFriends = user.friends.wait.filter(u => u.login.includes(search)) 
+    console.log('waitFriends', waitFriends)
+    res.json(waitFriends)
   } catch (error) {
     console.log(error)
   }

@@ -11,11 +11,6 @@ export const AddToFriends = () => {
   
   const {data} = useGetAllUsersByLoginQuery({inputValue, id: myUser._id})
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const searchTerm  = searchParams.get('search');
-  }, [data])
-
   return (
     <div>
       <SearchInput inputValue={inputValue} setInputValue={setInputValue}/>
