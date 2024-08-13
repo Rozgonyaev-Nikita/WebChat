@@ -27,15 +27,24 @@ export const roomApi = createApi({
         }),
         invalidatesTags: [{type: 'Rooms', id: 'LIST'}]
       }),
-      addRoom: builder.mutation({
+      addGroupRoom: builder.mutation({
         query: (body) => ({
-          url: 'addRoom',
+          url: 'room/addGroupRoom',
           method: 'POST',
           body
         }),
         invalidatesTags: [{type: 'Rooms', id: 'LIST'}]
-      })
+      }),
+      addPrivateRoom: builder.mutation({
+        query: (body) => ({
+          url: 'room/addPrivateRoom',
+          method: 'POST',
+          body //{myId: string, hisId: string}
+        }),
+        invalidatesTags: [{type: 'Rooms', id: 'LIST'}]
+      }),
     }),
+    
   })
 
-  export const { useGetRoomApiByUserQuery, useAddRoomMutation, useAddMessageinRoomMutation } = roomApi;
+  export const { useGetRoomApiByUserQuery, useAddGroupRoomMutation, useAddMessageinRoomMutation, useAddPrivateRoomMutation } = roomApi;

@@ -22,23 +22,23 @@ export const MyFriends = () => {
   }, [inputValue])
 
   useEffect(() => {
-    client.on('refreshRoom', () => { 
+    client.on('refreshFriendsClient', () => { 
         try {
           refetch();
-        console.log('refresh')
         } catch (error) {
           console.log(error)
         } 
-      return () => {
-        client.off('refreshRoom');
-      }
+      
     })
+    return () => {
+        client.off('refreshFriendsClient');
+      }
   }, [])
 
   return (
     <div>
       <SearchInput inputValue={inputValue} setInputValue={setInputValue}/>
-      {data?.length !== 0 && data?.length !== undefined ? <List items={data} renderItem={(user) => <UserCard key={user._id} user={user} type='basic'/>}/> : <h1>Такого пользователя нет!</h1>}
+      {data?.length !== 0 && data?.length !== undefined ? <List items={data} renderItem={(user) => <UserCard key={user._id} myUserId={userId} user={user} type='basic'/>}/> : <h1>Такого пользователя нет!</h1>}
     </div>
   )
 }

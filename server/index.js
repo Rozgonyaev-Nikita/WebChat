@@ -183,21 +183,6 @@ app.get('/api/friends/listAddFriend', async (req, res) => {
   }
 });
 
-// app.get('/api/friends/friendRequests', async (req, res) => {
-//   const {id} = req.query;
-//   if (!id) { 
-//     return res.status(401).json({ message: 'Не авторизирован' }); 
-//   }
-
-//   try {
-//     const user = await Users.findOne({_id: id}).populate('friends.wait');// возможно при закрытии ошибка тут
-//     console.log(user.friends.wait)
-//     res.json(user.friends.wait)
-//   } catch (error) {
-//     console.log(error)
-//   }
-  
-// });
 app.get('/api/friends/friendRequests', async (req, res) => {
   const {search, id} = req.query;
   if (!id) { 
@@ -214,46 +199,31 @@ app.get('/api/friends/friendRequests', async (req, res) => {
   
 });
 
-app.patch('/api/friends/addNewFriend', async (req, res) => {
+app.get('/api/getAllrooms/:user', async (req, res) => {// переделать что бы возвращались комнаты которые есть у пользователя, тоесть добавить связи
+  const userId = req.params.user; // Получаем userId из параметров
+  console.log('req', userId);
+
   try {
-    const { myId, friendId, action } = req.body; 
-    const myUser = await Users.findOne({ _id: myId }); 
-    const friendUser = await Users.findOne({ _id: friendId }); 
+    
+    const user = await Users.findById(userId);
+    // console.log('user', user)
 
-
-    if (!myUser || !friendUser) {
-      throw new Error('Пользователи не найдены');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    if (myUser.friends.offer.find(p => p.toString() === friendId) || friendUser.friends.wait.find(p => p.toString() === myId)) {
-      console.log('ошибка')
-      throw new Error('Запрос уже был отправлен')
-    }
+    // Теперь найдем комнаты по массиву идентификаторов
+    const rooms = await Room.find({ _id: { $in: user.rooms } }); // Находим комнаты, идентификаторы которых находятся в массиве rooms
+    res.json(rooms);
 
-    if (action === 'sendInvitation') {
-      myUser.friends.offer.push(friendUser);
-      friendUser.friends.wait.push(myUser);
-    } else if (action === 'acceptOffer') {
-      //удаляем заявку и предложение в друзья
-      const myIndex = myUser.friends.wait.findIndex(u => u._id === friendUser._id)
-      const friendIndex = friendUser.friends.offer.findIndex(u => u._id === myUser._id)
-
-      myUser.friends.wait.splice(myIndex, 1)
-      friendUser.friends.offer.splice(friendIndex, 1)
-
-      //добавляем в друзья
-      myUser.friends.myFriends.push(friendUser);
-      friendUser.friends.myFriends.push(myUser);
-    }
-
-    await myUser.save();
-    await friendUser.save();
-    res.json(myUser);
-  } catch (error) { res.status(400).send({ error: error.message }); }
+    // console.log('rooms', rooms);
+  } catch (error) {
+    console.error('Error fetching rooms:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
-
-app.post('/api/addRoom', async (req, res) => { //вступление в комнату
+app.post('/api/room/addGroupRoom', async (req, res) => { //вступление в комнату
   const { type, nameRoom, userId } = req.body;
 
   try {
@@ -302,29 +272,49 @@ app.post('/api/addRoom', async (req, res) => { //вступление в ком�
   }
 });
 
-app.get('/api/getAllrooms/:user', async (req, res) => {
-  const userId = req.params.user; // Получаем userId из параметров
-  console.log('req', userId);
+app.post('/api/room/addPrivateRoom', async(req, res) => {
+  const {myId, hisId} = req.body;
+  console.log(req.body)
+
+  const myUser = await Users.findOne({_id: myId})
+  const hisUser = await Users.findOne({_id: hisId})
+  const concatLogin = `${myUser.login} ${hisUser.login}`
+
+  const firstMyId = `${myId} ${hisId}`;
+  const firstHisId = `${hisId} ${myId}`;
 
   try {
-    // Предполагается, что у вас есть функция, которая получает пользователя по ID
-    const user = await Users.findById(userId);
-    // console.log('user', user)
+    const isHave = await Room.findOne({$or: [
+      {nameRoom: firstMyId},
+      {nameRoom: firstHisId}
+    ]})
+  
+    if(isHave) {
+      res.status(200).json(isHave._id)
+    } 
+    else {
+      const room = await new Room({
+        type: 'private',
+        nameRoom: concatLogin,
+        users: [myId, hisId], // добавление пользователя
+        messages: [],
+        lastMessage: null,
+      })
+      const {_id} = await room.save();
 
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      myUser.rooms.push(_id);
+      hisUser.rooms.push(_id);
+
+      await myUser.save();
+      await hisUser.save();
+
+      res.status(200).json(_id)
     }
-
-    // Теперь найдем комнаты по массиву идентификаторов
-    const rooms = await Room.find({ _id: { $in: user.rooms } }); // Находим комнаты, идентификаторы которых находятся в массиве rooms
-    res.json(rooms);
-
-    // console.log('rooms', rooms);
   } catch (error) {
-    console.error('Error fetching rooms:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.log('error', error)
   }
-});
+  
+})
 
 app.post('/api/addMessage', async (req, res) => {
   const { roomId, authorName, text } = req.body;
@@ -364,24 +354,67 @@ app.post('/api/addMessage', async (req, res) => {
   }
 })
 
+app.patch('/api/friends/addNewFriend', async (req, res) => {
+  try {
+    const { myId, friendId, action } = req.body; 
+    const myUser = await Users.findOne({ _id: myId }); 
+    const friendUser = await Users.findOne({ _id: friendId }); 
+
+
+    if (!myUser || !friendUser) {
+      throw new Error('Пользователи не найдены');
+    }
+
+    if (myUser.friends.offer.find(p => p.toString() === friendId) || friendUser.friends.wait.find(p => p.toString() === myId)) {
+      console.log('ошибка')
+      throw new Error('Запрос уже был отправлен')
+    }
+
+    if (action === 'sendInvitation') {
+      myUser.friends.offer.push(friendUser);
+      friendUser.friends.wait.push(myUser);
+    } else if (action === 'acceptOffer') {
+      //удаляем заявку и предложение в друзья
+      const myIndex = myUser.friends.wait.findIndex(u => u._id === friendUser._id)
+      const friendIndex = friendUser.friends.offer.findIndex(u => u._id === myUser._id)
+
+      myUser.friends.wait.splice(myIndex, 1)
+      friendUser.friends.offer.splice(friendIndex, 1)
+
+      //добавляем в друзья
+      myUser.friends.myFriends.push(friendUser);
+      friendUser.friends.myFriends.push(myUser);
+    }
+
+    await myUser.save();
+    await friendUser.save();
+    res.json(myUser);
+  } catch (error) { res.status(400).send({ error: error.message }); }
+});
+
 io.on('connection', (client) => {
   console.log('Клиент подключился!')
+  console.log('client', client)
 
   client.on('enterInRooms', (rooms) => {
     console.log('rooms', rooms)
     rooms.map(room => client.join(room))
   })
 
-  client.on('create', async(room) => {
-    const rom = await Room.findOne({nameRoom: room})
-    console.log('room', room)
+  client.on('create', async(id) => {
+    const rom = await Room.findOne({_id: id})
+    console.log('room', id)
     const _id = rom._id.toString()
     console.log(' _id', _id)
     client.join(_id)
   })
 
   client.on('refreshFriends', () => {
-    client.broadcast.emit('refreshRoom')
+    client.broadcast.emit('refreshFriendsClient')
+  })
+
+  client.on('refreshRooms', (id) => {
+    client.broadcast.emit('refreshRoomClient', id)
   })
 
   client.on('sendEveryoneMessage', (msg) => {

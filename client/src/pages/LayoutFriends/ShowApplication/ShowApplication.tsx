@@ -30,7 +30,7 @@ export const ShowApplication = () => {
   return (
     <div>
         <SearchInput inputValue={inputValue} setInputValue={setInputValue}/>
-      {data && <List items={data} renderItem={(user) => <UserCard key={user._id} user={user} myUser={myUser} type='wait'/>}/>}
+      {data && <List items={data} renderItem={(user) => <UserCard key={user._id} user={user} myUserId={myUser} type='wait'/>}/>}
     </div>
   )
 }
