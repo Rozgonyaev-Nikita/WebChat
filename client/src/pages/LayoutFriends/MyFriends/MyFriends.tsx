@@ -2,13 +2,16 @@
 import { useEffect, useState } from 'react'
 import { SearchInput } from '../../../UI/SearchInput/SearchInput';
 import { useGetMyFriendsByLoginQuery } from '../../../store/userApi';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import { UserCard } from '../../../UI/UserCard/UserCard';
 import List from '../../../components/List/List';
-import client from '../../../socket';
+import getSocketClient from '../../../socket';
+// import client from '../../../socket';
 
 export const MyFriends = () => {
+  const navigate = useNavigate();
+  const client = getSocketClient()
   const [searchParams] = useSearchParams()
   const [search, setSearch] = useState('')
   const [inputValue, setInputValue] = useState('')
@@ -22,17 +25,18 @@ export const MyFriends = () => {
   }, [inputValue])
 
   useEffect(() => {
-    client.on('refreshFriendsClient', () => { 
-        try {
-          refetch();
-        } catch (error) {
-          console.log(error)
-        } 
-      
-    })
-    return () => {
-        client.off('refreshFriendsClient');
-      }
+    try {
+      client.on('refreshMyFriendsClient', () => { 
+        
+        refetch();
+  })
+  return () => {
+    client.off('refreshMyFriendsClient');
+  }
+    } catch (error) {
+      console.log(error)
+      navigate('/')
+    }
   }, [])
 
   return (

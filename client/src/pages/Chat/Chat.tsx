@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react'
 import List from '../../components/List/List'
 import { RoomItem } from '../../components/RoomItem/RoomItem'
 import { IRoom } from '../../types/IRoom'
-import client from '../../socket'
+// import client from '../../socket'
 import axios from 'axios'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import { useNavigate } from 'react-router-dom'
 import { useAddGroupRoomMutation, useAddMessageinRoomMutation, useGetRoomApiByUserQuery } from '../../store/roomApi'
+import getSocketClient from '../../socket'
 
 export const Chat = () => {
+  const client = getSocketClient()
   const [rooms, setRooms] = useState<IRoom[]>([])
   const [room, setRoom] = useState('')
   const [message, setMessage] = useState('')
@@ -21,7 +23,7 @@ export const Chat = () => {
   const [addMessage, { data: dataRooms }] = useAddMessageinRoomMutation();
   const navigate = useNavigate();
 
-
+console.log('client2', client)
   const connectRoom = async () => {
     // axios.post('http://localhost:5000/api/addRoom', {type: 'group', nameRoom: room, userId: _id}).then(res => setRooms(prev => [...prev, res.data]))// обновить список, обновить data
     const resultRoom = await addRoom({ type: 'group', nameRoom: room, userId: _id })
@@ -39,21 +41,25 @@ export const Chat = () => {
   }, [_id])
 
   useEffect(() => {
+    
+    if(client) {
     client.on('chatMessage', async (data) => {
       await addMessage(data)
     })
     client.on('refreshRoomClient', (id) => { 
-      try {
+      try { 
         client.emit('create', id)
         refetch();
       } catch (error) {
         console.log(error)
-      } 
-    
+  }
   })
   return () => {
-      client.off('refreshFriendsClient');
+      // client.off('chatMessage');
+      // client.off('refreshRoomClient');
     }
+  }
+
   }, [])
 
 

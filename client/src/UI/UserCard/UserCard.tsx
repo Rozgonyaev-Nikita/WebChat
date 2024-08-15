@@ -2,9 +2,11 @@ import React, { FC } from 'react'
 import { IUser } from '../../types/IRoom'
 import classes from './UserCard.module.css'
 import { usePatchFriendsMutation } from '../../store/userApi';
-import client from '../../socket';
 import { useAddPrivateRoomMutation } from '../../store/roomApi';
 import { useNavigate } from 'react-router-dom';
+import getSocketClient from '../../socket';
+// import client from '../../socket';
+
 
 interface IUserCard {
     myUserId: string;
@@ -13,6 +15,7 @@ interface IUserCard {
 }
 
 export const UserCard: FC<IUserCard> = ({myUserId, user, type = 'basic'}) => {
+  const client = getSocketClient();
   const [actionFriend] = usePatchFriendsMutation();
   const [wtiteMessage2, {data}] = useAddPrivateRoomMutation();
 
@@ -22,6 +25,7 @@ export const UserCard: FC<IUserCard> = ({myUserId, user, type = 'basic'}) => {
   const addnewFriend = async() => {
     try {
       await actionFriend({myId: myUserId, friendId: user._id, action: 'sendInvitation'}).unwrap();
+      client.emit('refreshWaitFriends', user._id)
       console.log('успех')
     } catch (error) {
       console.log('ошибка', error)
@@ -31,7 +35,7 @@ export const UserCard: FC<IUserCard> = ({myUserId, user, type = 'basic'}) => {
   const acceptOffer = async() => {
     try {
       await actionFriend({myId: myUserId, friendId: user._id, action: 'acceptOffer'}).unwrap();
-      client.emit('refreshFriends')
+      client.emit('refreshMyFriends', user._id)
       console.log('успех')
     } catch (error) {
       console.log('ошибка', error)
@@ -43,7 +47,7 @@ export const UserCard: FC<IUserCard> = ({myUserId, user, type = 'basic'}) => {
     const roomId = await wtiteMessage2({myId: myUserId, hisId: user._id})
     console.log(roomId.data)
     client.emit('create', roomId.data)
-    client.emit('refreshRooms', roomId.data)
+    client.emit('refreshRooms', {room: roomId.data, recipient: user._id})
     navigate(`/room/${roomId.data}`)
   }
 

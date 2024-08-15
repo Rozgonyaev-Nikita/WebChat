@@ -4,10 +4,12 @@ import { useAddMessageinRoomMutation, useGetRoomApiByUserQuery } from '../../sto
 import { useAppSelector } from '../../hooks/reduxHooks';
 import List from '../../components/List/List';
 import { MessageItem } from '../../components/MessageItem/MessageItem';
-import client from '../../socket';
+// import client from '../../socket';
 import { IMessage } from '../../types/IRoom';
+import getSocketClient from '../../socket';
 
 export const RoomInside = () => {
+  const client = getSocketClient()
   const {roomName} = useParams();
 
   const [message, setMessage] = useState('');
@@ -30,13 +32,14 @@ export const RoomInside = () => {
   // }, [room])
 
   useEffect(() => {
+    if(client){
     client.on('chatMessage', (data) => {
       console.log('mes', data)
       setMessages(prev => [...prev, data])
     })
     return () => {
       client.off('chatMessage')
-    }
+    } }
   }, [client])
 
   if(room === undefined){
@@ -45,7 +48,7 @@ export const RoomInside = () => {
   }
 
 
-  const handlerAddMessage = async() => {
+  const handlerAddMessage = async() => {//ошибка если пустое сообщение
     const newMessage = { roomId: roomName, authorName: user, text: message };
     await addMessage(newMessage).unwrap();
     console.log('отправка')

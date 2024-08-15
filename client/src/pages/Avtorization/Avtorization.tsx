@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import {authAction} from '../../store/authSlice'
+import { authAction } from '../../store/authSlice';
 import { useAppDispatch } from "../../hooks/reduxHooks";
 import classes from "./Avtorization.module.css";
+import { connectSocket } from "../../socket";
+
 
 const Avtorization = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
-  // const [avtoriz, setAvtoriz] = useState(false);
 
   const navigate = useNavigate();
-
-  // const auth = useAppSelector((state) => state.auth.isAuth);
   const dispatch = useAppDispatch();
 
   const avtorization = () => {
@@ -25,14 +24,12 @@ const Avtorization = () => {
         },
       })
       .then((response) => {
-        // if (response.data === true) {
         if (response.data) {
           console.log(response.data);
-          // setAvtoriz(response.data);
+          connectSocket()
           dispatch(authAction(response.data));
           navigate("/");
         } else {
-          // dispatch(authAction(response.data));
           alert("Пробуй еще!!!");
         }
       })
@@ -42,18 +39,17 @@ const Avtorization = () => {
   };
 
   useEffect(() => {
-        const handleKeyDown = (e) => {
-            if(e.key === 'Enter'){
-              avtorization()
-            }
-            
-        }
-        window.addEventListener('keydown', handleKeyDown)
+    const handleKeyDown = (e) => {
+      if (e.key === 'Enter') {
+        avtorization();
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
 
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-          };
-    }, [login, password])
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [login, password]);
 
   return (
     <div className={classes.avtorization}>
@@ -65,7 +61,7 @@ const Avtorization = () => {
           placeholder="Введите логин"
         />
         <input
-          type="text"
+          type="password" // Изменил на "password" для скрытия пароля
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Введите пароль"

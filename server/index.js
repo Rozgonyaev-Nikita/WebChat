@@ -8,6 +8,7 @@ import morgan from 'morgan';
 import bcrypt from 'bcrypt'
 
 const saltRounds = 10;
+const users = {};
 
 const app = express();
 const server = createServer(app);
@@ -129,7 +130,6 @@ app.get('/api/friends/myFriends', async (req, res) => {
   try {
     
     const user = await Users.findOne({ _id: userId }).populate('friends.myFriends');
-    console.log('us', user)
     let myFriends = user.friends.myFriends;
 
     if (search) {
@@ -167,7 +167,7 @@ app.get('/api/friends/listAddFriend', async (req, res) => {
 
     } else {
       // Находим всех пользователей, если имя не предоставлено
-      console.log('cazan')
+      
       users = await Users.find({ _id: { $nin: otherPeople } });
     }
 
@@ -175,7 +175,7 @@ app.get('/api/friends/listAddFriend', async (req, res) => {
       // return res.json({ message: 'Пользователи не найдены' });
       return res.json([])
     }
-    console.log('users', users)
+    
     res.json(users); // Отправляем найденных пользователей
   } catch (err) {
     console.error(err);
@@ -201,12 +201,10 @@ app.get('/api/friends/friendRequests', async (req, res) => {
 
 app.get('/api/getAllrooms/:user', async (req, res) => {// переделать что бы возвращались комнаты которые есть у пользователя, тоесть добавить связи
   const userId = req.params.user; // Получаем userId из параметров
-  console.log('req', userId);
 
   try {
     
     const user = await Users.findById(userId);
-    // console.log('user', user)
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -394,7 +392,13 @@ app.patch('/api/friends/addNewFriend', async (req, res) => {
 
 io.on('connection', (client) => {
   console.log('Клиент подключился!')
-  console.log('client', client)
+
+  client.on('register', (username) => {
+    users[username] = client.id; // связываем имя пользователя с сокет id
+    console.log(`User registered: ${username} with id: ${client.id}`);
+    console.log('users', users)
+});
+  // client.io('')
 
   client.on('enterInRooms', (rooms) => {
     console.log('rooms', rooms)
@@ -403,18 +407,29 @@ io.on('connection', (client) => {
 
   client.on('create', async(id) => {
     const rom = await Room.findOne({_id: id})
-    console.log('room', id)
     const _id = rom._id.toString()
     console.log(' _id', _id)
     client.join(_id)
   })
 
-  client.on('refreshFriends', () => {
-    client.broadcast.emit('refreshFriendsClient')
+  client.on('refreshMyFriends', (recipient) => {//id
+    const recipientSocketId = users[recipient];
+    if (recipientSocketId) {
+    client.to(recipientSocketId).emit('refreshMyFriendsClient')
+    }
+  })
+  client.on('refreshWaitFriends', (recipient) => {//id
+    const recipientSocketId = users[recipient];
+    if (recipientSocketId) {
+    client.to(recipientSocketId).emit('refreshWaitFriendsClient')
+    }
   })
 
-  client.on('refreshRooms', (id) => {
-    client.broadcast.emit('refreshRoomClient', id)
+  client.on('refreshRooms', ({recipient, room}) => {//id
+    const recipientSocketId = users[recipient];
+    if (recipientSocketId) {
+    client.to(recipientSocketId).emit('refreshRoomClient', room)
+    }
   })
 
   client.on('sendEveryoneMessage', (msg) => {
@@ -426,6 +441,12 @@ io.on('connection', (client) => {
 
   client.on('disconnect', () => {
     console.log('Отключился');
+    for (const username in users) {
+      if (users[username] === client.id) {
+          delete users[username];
+          break;
+      }
+  }
   });
 })
 
