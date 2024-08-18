@@ -20,7 +20,7 @@ const io = new Server(server, {
 
 app.use(cors());
 app.use(express.json());
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 
 mongoose.connect('mongodb://localhost:27017/chat')
   .then(() => console.log("Connected to yourDB-name database"))
@@ -398,11 +398,29 @@ io.on('connection', (client) => {
     console.log(`User registered: ${username} with id: ${client.id}`);
     console.log('users', users)
 });
-  // client.io('')
+  // client.on('users_online', ({roomId, usersInRoom}) => {
+  //   //.filter(u => u.includes(usersInRoom));
+  //   const usersOnline = Object.keys(users).filter(u => usersInRoom.includes(u));
+  //   console.log('usersOnline', usersOnline)
+  //   client.to(roomId).emit('user_online', usersOnline)
+  // })
+  client.on('users_online', ({roomId, usersInRoom}) => {
+    console.log('roomId', roomId)
+    const usersOnline = Object.keys(users).filter(u => usersInRoom.includes(u));
+    console.log('usersOnline', usersOnline);
+    io.to(roomId).emit('user_online', usersOnline);
+  });
 
   client.on('enterInRooms', (rooms) => {
-    console.log('rooms', rooms)
-    rooms.map(room => client.join(room))
+    // console.log('rooms', rooms)
+    rooms.map(room => {
+      client.join(room);
+      console.log('room', room)
+      // const friend = Object.entries(users).find(([key, value]) => value === client.id);
+      // console.log('friend', friend)
+      // client.to(room).emit('user_online', friend)
+    }
+    )
   })
 
   client.on('create', async(id) => {
@@ -434,6 +452,7 @@ io.on('connection', (client) => {
 
   client.on('sendEveryoneMessage', (msg) => {
     const { text, roomId, authorName } = msg;
+    console.log('users', users)
     console.log('msg', msg)
     io.to(roomId).emit('chatMessage', { authorName, text, date: Date.now() })
   })

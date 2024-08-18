@@ -2,11 +2,11 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { IUser } from "../types/IRoom";
 
 interface IAuth {
-  isAuth: boolean;
+  online: boolean;
   user: IUser;
 }
 const initialState: IAuth = {
-  isAuth: false,
+  online: false,
   user: {
     _id: '',
     login: "",
@@ -28,7 +28,7 @@ const authSlice = createSlice({
     authAction(state, action) {
       // state.isAuth = action.payload;
       state.user = action.payload;
-      state.isAuth = true;
+      state.online = true;
     },
     addRoom(state, action: PayloadAction<string>) {
       state.user.rooms.push(action.payload);

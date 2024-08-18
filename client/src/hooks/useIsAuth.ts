@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 // хук для того, что бы пользователя перекидывало на авторизацию, если он еще не зарегистрирован
 const useIsAuth = () => {
-    const user = useAppSelector(u => u.auth.isAuth);
+    const user = useAppSelector(u => u.auth.online);
     const navigate = useNavigate();
     const { pathname } = useLocation();
     console.log('навиг', pathname)

@@ -23,7 +23,7 @@ export const Chat = () => {
   const [addMessage, { data: dataRooms }] = useAddMessageinRoomMutation();
   const navigate = useNavigate();
 
-console.log('client2', client)
+  console.log('client2', client)
   const connectRoom = async () => {
     // axios.post('http://localhost:5000/api/addRoom', {type: 'group', nameRoom: room, userId: _id}).then(res => setRooms(prev => [...prev, res.data]))// обновить список, обновить data
     const resultRoom = await addRoom({ type: 'group', nameRoom: room, userId: _id })
@@ -41,24 +41,24 @@ console.log('client2', client)
   }, [_id])
 
   useEffect(() => {
-    
-    if(client) {
-    client.on('chatMessage', async (data) => {
-      await addMessage(data)
-    })
-    client.on('refreshRoomClient', (id) => { 
-      try { 
-        client.emit('create', id)
-        refetch();
-      } catch (error) {
-        console.log(error)
-  }
-  })
-  return () => {
-      // client.off('chatMessage');
-      // client.off('refreshRoomClient');
+
+    if (client) {
+      client.on('chatMessage', async (data) => {
+        await addMessage(data)
+      })
+      client.on('refreshRoomClient', (id) => {
+        try {
+          client.emit('create', id)
+          refetch();
+        } catch (error) {
+          console.log(error)
+        }
+      })
+      return () => {
+        // client.off('chatMessage');
+        // client.off('refreshRoomClient');
+      }
     }
-  }
 
   }, [])
 
@@ -71,7 +71,11 @@ console.log('client2', client)
       <br />
       {/* <input type="text" value={message} onChange={(e) => setMessage(e.target.value)}/>
       <button onClick={sendMessage}>Отправить</button> */}
-      {data !== undefined && <List items={data} renderItem={(room) => <RoomItem item={room} userId={login} key={room['_id'].toString()} />} />}
+      {data && data.length > 0 ? (
+        <List items={data} renderItem={(room) => <RoomItem item={room} userId={login} key={room['_id'].toString()} />} />
+      ) : (
+        <h2>У вас пока еще нет ни одного чата!</h2>
+      )}
     </div>
   )
 }
