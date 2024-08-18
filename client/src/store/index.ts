@@ -2,10 +2,12 @@ import { configureStore } from "@reduxjs/toolkit";
 import authSlice from './authSlice'
 import { roomApi } from "./roomApi";
 import { userApi } from "./userApi";
+import usersOnlineSlice from "./usersOnlineSlice";
 
 const store = configureStore({
   reducer: {
     auth: authSlice,
+    usersOnline: usersOnlineSlice,
     [roomApi.reducerPath]: roomApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
   },

@@ -390,6 +390,10 @@ app.patch('/api/friends/addNewFriend', async (req, res) => {
   } catch (error) { res.status(400).send({ error: error.message }); }
 });
 
+app.get('/api/usersOnline', async (req, res) => {
+  res.send(Object.keys(users))
+})
+
 io.on('connection', (client) => {
   console.log('Клиент подключился!')
 
@@ -397,19 +401,15 @@ io.on('connection', (client) => {
     users[username] = client.id; // связываем имя пользователя с сокет id
     console.log(`User registered: ${username} with id: ${client.id}`);
     console.log('users', users)
+    io.emit('user_online', username)
 });
+
   // client.on('users_online', ({roomId, usersInRoom}) => {
-  //   //.filter(u => u.includes(usersInRoom));
+  //   console.log('roomId', roomId)
   //   const usersOnline = Object.keys(users).filter(u => usersInRoom.includes(u));
-  //   console.log('usersOnline', usersOnline)
-  //   client.to(roomId).emit('user_online', usersOnline)
-  // })
-  client.on('users_online', ({roomId, usersInRoom}) => {
-    console.log('roomId', roomId)
-    const usersOnline = Object.keys(users).filter(u => usersInRoom.includes(u));
-    console.log('usersOnline', usersOnline);
-    io.to(roomId).emit('user_online', usersOnline);
-  });
+  //   console.log('usersOnline', usersOnline);
+  //   io.to(roomId).emit('user_online', usersOnline);
+  // });
 
   client.on('enterInRooms', (rooms) => {
     // console.log('rooms', rooms)
@@ -460,6 +460,9 @@ io.on('connection', (client) => {
 
   client.on('disconnect', () => {
     console.log('Отключился');
+    const key = Object.entries(users).find(([key, value]) => value === client.id)?.[0];
+    io.emit('user_offline', key)
+    console.log('key', key)
     for (const username in users) {
       if (users[username] === client.id) {
           delete users[username];
