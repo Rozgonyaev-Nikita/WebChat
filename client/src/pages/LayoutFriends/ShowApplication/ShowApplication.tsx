@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { IUser } from '../../../types/IRoom'
 import List from '../../../components/List/List'
 import { UserCard } from '../../../UI/UserCard/UserCard'
 import { useAppSelector } from '../../../hooks/reduxHooks'
@@ -8,6 +7,7 @@ import { SearchInput } from '../../../UI/SearchInput/SearchInput'
 import { useGetWaitFriendsQuery } from '../../../store/userApi'
 import getSocketClient from '../../../socket'
 import { useNavigate } from 'react-router-dom'
+import { IUser } from '../../../types/IUser'
 
 
 export const ShowApplication = () => {
@@ -22,6 +22,8 @@ export const ShowApplication = () => {
 
     useEffect(() => {
       try {
+        refetch();
+        console.log('refw')
         client.on('refreshWaitFriendsClient', () => {
           refetch();
         })
@@ -33,6 +35,7 @@ export const ShowApplication = () => {
         navigate('/avtorization')
       }
     }, [])
+;
     
   return (
     <div>

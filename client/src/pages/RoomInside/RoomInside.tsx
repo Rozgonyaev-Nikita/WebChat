@@ -9,6 +9,8 @@ import { IMessage } from '../../types/IRoom';
 import getSocketClient from '../../socket';
 import { MenuRoom } from '../../components/MenuRoom/MenuRoom';
 import { getNameRoom } from '../../utils';
+import { MenuPrivateRoom } from '../../components/MenuRoom/MenuPrivateRoom/MenuPrivateRoom';
+import { MenuGroupRoom } from '../../components/MenuRoom/MenuGroupRoom/MenuGroupRoom';
 
 export const RoomInside = () => {
   const client = getSocketClient();
@@ -17,7 +19,7 @@ export const RoomInside = () => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<IMessage[]>([]);
   const {_id, login} = useAppSelector(u => u.auth.user);
-  const { room } = useGetRoomApiByUserQuery(_id, {
+  const { room, refetch } = useGetRoomApiByUserQuery(_id, {
     selectFromResult: ({ data }) => ({
       room: data?.find((post) => post._id === roomName),
     }),
@@ -39,10 +41,16 @@ export const RoomInside = () => {
       console.log('mes', data)
       setMessages(prev => [...prev, data])
     })
-    // client.on('user_online', (friend) => {
-    //   console.log('friend', friend)
-    //   setMessages(prev => [...prev, data])
-    // })
+    client.on('refreshGroupRoomClient', () => {
+      try {
+        console.log('абнавлениеее')
+        refetch()
+        console.log('абнавлениеее2')
+      } catch (error) {
+        console.log(error)
+      }
+    })
+
     return () => {
       client.off('chatMessage')
     } }
@@ -65,7 +73,7 @@ export const RoomInside = () => {
   } 
   return (
     <div>
-        <MenuRoom type={room.type} roomId ={room._id} myUser={_id} users={room.users} nameRoom={getNameRoom(room, login)}/>
+        { room.type === 'private' ? <MenuPrivateRoom myUser={_id} users={room.users} nameRoom={getNameRoom(room, login)}/> : <MenuGroupRoom myUser={_id} users={room.users} nameRoom={getNameRoom(room, login)}/>}
         <input type="text" value={message} onChange={e => setMessage(e.target.value)} />
         <button onClick={handlerAddMessage}>Отправить</button>
         <List items={room.messages} renderItem={(message, key) => { 

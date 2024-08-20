@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { IUser } from "../types/IRoom";
+import { IUser } from "../types/IUser";
 
 interface IAuth {
   online: boolean;

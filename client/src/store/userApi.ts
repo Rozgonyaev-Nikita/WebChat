@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"; // Обратите внимание на "/react"
-import { IUser } from "../types/IRoom";
+import { IUser } from "../types/IUser";
 
 export const userApi = createApi({
     reducerPath: 'userApi',

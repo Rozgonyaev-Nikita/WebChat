@@ -1,8 +1,10 @@
+import { IUser } from "./IUser";
+
 export interface IRoom {
     _id: string;
     type: 'private' | 'group';
     nameRoom?: string;
-    users: string[];
+    users: IUser[];
     messages: IMessage[];
     lastMessage: IMessage;
 }
@@ -12,21 +14,6 @@ export interface IMessage {
     authorName?: string;
     text: string;
     date?: Date;
-}
-
-export interface IUser {
-    _id: string;
-    login: string;
-    password: string;
-    rooms: string[];
-    friends: IFriends;
-}
-
-export interface IFriends {
-    myFriends: string[];
-    request: string[];
-    offer: string[];
-    wait: string[]
 }
 
 export interface IActionAdd {

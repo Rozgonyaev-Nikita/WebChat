@@ -1,10 +1,10 @@
 import React, { FC } from 'react'
-import { IUser } from '../../types/IRoom'
 import classes from './UserCard.module.css'
 import { usePatchFriendsMutation } from '../../store/userApi';
 import { useAddPrivateRoomMutation } from '../../store/roomApi';
 import { useNavigate } from 'react-router-dom';
 import getSocketClient from '../../socket';
+import { IUser } from '../../types/IUser';
 // import client from '../../socket';
 
 

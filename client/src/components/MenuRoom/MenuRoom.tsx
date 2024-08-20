@@ -22,31 +22,13 @@ export const MenuRoom: FC<IMenuRoomProps> = ({nameRoom, type, users, roomId, myU
     state.usersOnline.usersOnline.some(u => u === nameOther)
   );
   console.log('isOnline', isOnline)
-  // useEffect(() => {
-  //   client.emit('users_online', {roomId, usersInRoom: users})
-  //   console.log('отправка')
-  // }, [])
-  // useEffect(() => {
-  //   console.log('привет')
-  //   client.on('user_online', (friend) => {
-  //     console.log('karp')
-  //     console.log('user_online', friend)
-  //     setfriend2(friend)
-  //   })
-  //   return () => {
-  //     client.off('user_online')
-  //   } 
-  // }, [client])
 
-  // const isOnline = users.find(u => u === friend2)
-  // const nameOther = friend2.find(f => f !== myUser)
-  // console.log('friend2', friend2)
-  // console.log('isOnline', isOnline)
 
   return (
     <div className={classes.menuRoom}>
         <h2>{nameRoom}</h2>
         {type === "private" && isOnline && 'Онлайн'}
+        {type === 'group' && <h5>{`Количество участников ${users.length}`}</h5>}
     </div>
   )
 }

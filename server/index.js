@@ -29,7 +29,7 @@ mongoose.connect('mongodb://localhost:27017/chat')
 const RoomScheme = mongoose.Schema({
   type: { type: String, required: true },
   nameRoom: { type: String },
-  users: [{ type: String }],
+  users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
   messages: [
     {
       authorName: {
@@ -211,7 +211,7 @@ app.get('/api/getAllrooms/:user', async (req, res) => {// переделать �
     }
 
     // Теперь найдем комнаты по массиву идентификаторов
-    const rooms = await Room.find({ _id: { $in: user.rooms } }); // Находим комнаты, идентификаторы которых находятся в массиве rooms
+    const rooms = await Room.find({ _id: { $in: user.rooms } }).populate('users'); // Находим комнаты, идентификаторы которых находятся в массиве rooms
     res.json(rooms);
 
     // console.log('rooms', rooms);
@@ -398,27 +398,16 @@ io.on('connection', (client) => {
   console.log('Клиент подключился!')
 
   client.on('register', (username) => {
-    users[username] = client.id; // связываем имя пользователя с сокет id
+    users[username] = client.id;
     console.log(`User registered: ${username} with id: ${client.id}`);
     console.log('users', users)
     io.emit('user_online', username)
 });
 
-  // client.on('users_online', ({roomId, usersInRoom}) => {
-  //   console.log('roomId', roomId)
-  //   const usersOnline = Object.keys(users).filter(u => usersInRoom.includes(u));
-  //   console.log('usersOnline', usersOnline);
-  //   io.to(roomId).emit('user_online', usersOnline);
-  // });
-
   client.on('enterInRooms', (rooms) => {
     // console.log('rooms', rooms)
     rooms.map(room => {
       client.join(room);
-      console.log('room', room)
-      // const friend = Object.entries(users).find(([key, value]) => value === client.id);
-      // console.log('friend', friend)
-      // client.to(room).emit('user_online', friend)
     }
     )
   })
@@ -443,11 +432,16 @@ io.on('connection', (client) => {
     }
   })
 
-  client.on('refreshRooms', ({recipient, room}) => {//id
+  client.on('refreshRooms', ({recipient, room}) => {
     const recipientSocketId = users[recipient];
     if (recipientSocketId) {
     client.to(recipientSocketId).emit('refreshRoomClient', room)
     }
+  })
+
+  client.on('refreshGroupRoom', (room) => {
+    console.log('room678', room)
+    client.to(room).emit('refreshGroupRoomClient')
   })
 
   client.on('sendEveryoneMessage', (msg) => {

@@ -10,7 +10,6 @@ interface IRoomItemsProps {
 }
 
 export const RoomItem:FC<IRoomItemsProps> = ({item, userId}) => {
-  console.log('userId2', userId)
   return (
     <Link to={`/room/${item._id}`}>
     <div className={classes.room}>

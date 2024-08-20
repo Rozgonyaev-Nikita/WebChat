@@ -18,7 +18,6 @@ export const MainPage = () => {
       client.emit('register', _id);
       axios.get('http://localhost:5000/api/usersOnline')
       .then( res => dispatch(getUsersOnline(res.data)))
-      console.log('client', client)
     client.on('connect', () => {
       // client.emit('connection', _id)
       console.log('Подключился')
@@ -46,7 +45,6 @@ export const MainPage = () => {
   useEffect(() => {
     if(client){
     if(rooms.length !== 0){
-      console.log('enterInRooms')
       client.emit('enterInRooms', rooms)
     }
   }

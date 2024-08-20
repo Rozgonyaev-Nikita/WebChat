@@ -23,14 +23,12 @@ export const Chat = () => {
   const [addMessage, { data: dataRooms }] = useAddMessageinRoomMutation();
   const navigate = useNavigate();
 
-  console.log('client2', client)
   const connectRoom = async () => {
-    // axios.post('http://localhost:5000/api/addRoom', {type: 'group', nameRoom: room, userId: _id}).then(res => setRooms(prev => [...prev, res.data]))// обновить список, обновить data
     const resultRoom = await addRoom({ type: 'group', nameRoom: room, userId: _id })
     console.log('resultRoom', resultRoom.data)
     client.emit('create', resultRoom.data._id)
+    client.emit('refreshGroupRoom', resultRoom.data._id)
   }
-
 
   useEffect(() => {
 

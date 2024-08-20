@@ -26,6 +26,8 @@ export const MyFriends = () => {
 
   useEffect(() => {
     try {
+      console.log('refmy')
+      refetch();
       client.on('refreshMyFriendsClient', () => { 
         
         refetch();
