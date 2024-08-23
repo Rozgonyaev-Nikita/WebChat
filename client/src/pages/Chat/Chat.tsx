@@ -11,16 +11,12 @@ import getSocketClient from '../../socket'
 
 export const Chat = () => {
   const client = getSocketClient()
-  const [rooms, setRooms] = useState<IRoom[]>([])
   const [room, setRoom] = useState('')
-  const [message, setMessage] = useState('')
-  const [data2, setData2] = useState({ message: '', room: '' })
-  const [update, setUpdate] = useState<any>('')
 
   const { _id, login } = useAppSelector(u => u.auth.user)
   const { data, isLoading, refetch } = useGetRoomApiByUserQuery(_id);
   const [addRoom, { isError }] = useAddGroupRoomMutation();
-  const [addMessage, { data: dataRooms }] = useAddMessageinRoomMutation();
+  const [addMessage] = useAddMessageinRoomMutation();
   const navigate = useNavigate();
 
   const connectRoom = async () => {
@@ -67,8 +63,6 @@ export const Chat = () => {
       <input type="text" value={room} onChange={e => setRoom(e.target.value)} />
       <button onClick={connectRoom}>Присоединиться</button>
       <br />
-      {/* <input type="text" value={message} onChange={(e) => setMessage(e.target.value)}/>
-      <button onClick={sendMessage}>Отправить</button> */}
       {data && data.length > 0 ? (
         <List items={data} renderItem={(room) => <RoomItem item={room} userId={login} key={room['_id'].toString()} />} />
       ) : (

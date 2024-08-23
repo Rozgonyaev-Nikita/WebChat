@@ -11,6 +11,7 @@ export interface IUser {
     password: string;
     rooms: string[];
     friends: IFriends;
+    avatar?: string;
 }
 
 export interface IUserOnline extends IUser {

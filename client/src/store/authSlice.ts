@@ -17,8 +17,10 @@ const initialState: IAuth = {
       request: [],
       offer: [],
       wait: [],
-    }
+    },
+    avatar: null
   },
+  
 };
 
 const authSlice = createSlice({
@@ -26,7 +28,6 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     authAction(state, action) {
-      // state.isAuth = action.payload;
       state.user = action.payload;
       state.online = true;
     },

@@ -7,7 +7,6 @@ import { useAppSelector } from '../../../hooks/reduxHooks';
 import { UserCard } from '../../../UI/UserCard/UserCard';
 import List from '../../../components/List/List';
 import getSocketClient from '../../../socket';
-// import client from '../../../socket';
 
 export const MyFriends = () => {
   const navigate = useNavigate();
@@ -44,7 +43,7 @@ export const MyFriends = () => {
   return (
     <div>
       <SearchInput inputValue={inputValue} setInputValue={setInputValue}/>
-      {data?.length !== 0 && data?.length !== undefined ? <List items={data} renderItem={(user) => <UserCard key={user._id} myUserId={userId} user={user} type='basic'/>}/> : <h1>Такого пользователя нет!</h1>}
+      {data?.length !== 0 && data?.length !== undefined ? <List items={data} renderItem={(user) => <UserCard key={user._id} myUserId={userId} user={user} type='basic'/>}/> : <div><h1>Друзей нет</h1><h2>Ты жалок!</h2></div>}
     </div>
   )
 }

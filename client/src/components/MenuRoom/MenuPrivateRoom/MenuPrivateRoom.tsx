@@ -13,6 +13,7 @@ interface IMenuPrivateRoomProps{
 export const MenuPrivateRoom: FC<IMenuPrivateRoomProps> = ({nameRoom, users, myUser}) => {
 
   const nameOther = users.find(f => f._id !== myUser);
+  const myImage = useAppSelector(state => state.avatar.avatar);
 
   console.log('nameOther', nameOther)
   const isOnline = useAppSelector(state => 
@@ -23,9 +24,9 @@ export const MenuPrivateRoom: FC<IMenuPrivateRoomProps> = ({nameRoom, users, myU
 
   return (
     <div className={classes.menuRoom}>
+      {nameOther.avatar && <img src={nameOther.avatar} width={60}/>}
         <h2>{nameRoom}</h2>
         {isOnline && 'Онлайн'}
-        {/* {type === 'group' && <h5>{`Количество участников ${users.length}`}</h5>} */}
     </div>
   )
 }

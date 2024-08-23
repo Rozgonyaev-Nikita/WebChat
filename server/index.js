@@ -6,11 +6,26 @@ import { type } from 'node:os';
 import cors from 'cors';
 import morgan from 'morgan';
 import bcrypt from 'bcrypt'
+import multer from 'multer';
+import path from 'node:path';
+import { fileURLToPath } from 'url';
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+const upload = multer({storage})
+
 
 const saltRounds = 10;
 const users = {};
 
 const app = express();
+
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -20,6 +35,11 @@ const io = new Server(server, {
 
 app.use(cors());
 app.use(express.json());
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // app.use(morgan('dev'));
 
 mongoose.connect('mongodb://localhost:27017/chat')
@@ -62,7 +82,8 @@ const UserScheme = mongoose.Schema({
     myFriends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
     wait: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
     offer: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
-  }
+  }, 
+  avatar: {type: String}
 });
 
 export const Room = mongoose.model('room', RoomScheme)
@@ -101,11 +122,20 @@ app.get("/api/getUser", async(req, res) => {
   console.log(login, password);
 });
 
-app.post("/api/registration", async (req, res) => {
+app.post("/api/registration", upload.single('image'), async (req, res) => {
   try {
+    // console.log('file', req.file)
+    let imageUrl;
+    if(req.file){
+      imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    } else{
+      imageUrl = null;
+    }
+    console.log('img', imageUrl)
     const { password, ...otherData } = req.body;
+    // const image = req.file?.buffer;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const users = new Users({...otherData, password: hashedPassword});
+    const users = new Users({...otherData, password: hashedPassword, avatar: imageUrl});
     console.log("users", req.body);
     let result = await users.save();
     result = result.toObject();
@@ -117,6 +147,7 @@ app.post("/api/registration", async (req, res) => {
       console.log("Posts already register");
     }
   } catch (e) {
+    console.log(e)
     res.send("Something Went Wrong");
   }
 });
@@ -199,8 +230,8 @@ app.get('/api/friends/friendRequests', async (req, res) => {
   
 });
 
-app.get('/api/getAllrooms/:user', async (req, res) => {// переделать что бы возвращались комнаты которые есть у пользователя, тоесть добавить связи
-  const userId = req.params.user; // Получаем userId из параметров
+app.get('/api/getAllrooms/:user', async (req, res) => {
+  const userId = req.params.user; 
 
   try {
     
@@ -211,7 +242,7 @@ app.get('/api/getAllrooms/:user', async (req, res) => {// переделать �
     }
 
     // Теперь найдем комнаты по массиву идентификаторов
-    const rooms = await Room.find({ _id: { $in: user.rooms } }).populate('users'); // Находим комнаты, идентификаторы которых находятся в массиве rooms
+    const rooms = await Room.find({ _id: { $in: user.rooms } }).populate('users');
     res.json(rooms);
 
     // console.log('rooms', rooms);
@@ -326,7 +357,7 @@ app.post('/api/addMessage', async (req, res) => {
     const room = await Room.findById(roomId);
 
     if (!room) {
-      return res.status(404).json({ message: 'Room not found' });
+      // return res.status(404).json({ message: 'Room not found' });
     }
 
     // Создаем новое сообщение
@@ -456,7 +487,6 @@ io.on('connection', (client) => {
     console.log('Отключился');
     const key = Object.entries(users).find(([key, value]) => value === client.id)?.[0];
     io.emit('user_offline', key)
-    console.log('key', key)
     for (const username in users) {
       if (users[username] === client.id) {
           delete users[username];

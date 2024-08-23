@@ -5,11 +5,12 @@ import { authAction } from '../../store/authSlice';
 import { useAppDispatch } from "../../hooks/reduxHooks";
 import classes from "./Avtorization.module.css";
 import { connectSocket } from "../../socket";
+import { setAvatar } from "../../store/userImageSlice";
 
 
 const Avtorization = () => {
   const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("123456");
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -24,10 +25,12 @@ const Avtorization = () => {
         },
       })
       .then((response) => {
+        const {avatar, ...user} = response.data
         if (response.data) {
-          console.log(response.data);
+          console.log(user);
           connectSocket()
-          dispatch(authAction(response.data));
+          dispatch(authAction(user));
+          dispatch(setAvatar(avatar));
           navigate("/");
         } else {
           alert("Пробуй еще!!!");

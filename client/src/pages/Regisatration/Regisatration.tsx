@@ -9,6 +9,7 @@ const Registration = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
+  const [image, setImage] = useState(null);
 
   const navigate = useNavigate();
 
@@ -17,7 +18,33 @@ const Registration = () => {
     formState: { errors },
   } = useForm({ mode: "onBlur" });
 
-  // const navigate = useNavigate();
+  const sendImg = async () => {
+    const user = new FormData();
+    user.append('login', login);
+    user.append('password', password);
+    // user.append('rooms', JSON.stringify([]));
+    user.append('image', image || null);
+
+    try {
+        const { data } = await axios.post('http://localhost:5000/api/registration', user);
+        console.log('data', data); // This should be your byte array
+        
+        // Create a Uint8Array from the byte array
+        // const byteArray = new Uint8Array(data.data.data);
+
+        // // Create a Blob from the Uint8Array
+        // const blob = new Blob([byteArray]);
+
+        // // Create a URL from the Blob
+        // const url = URL.createObjectURL(blob);
+        // // setUrlImage(url);
+        // // setNewItem({login: login, password: password, urlImage: url})
+        
+        // console.log('url', url);
+    } catch (error) {
+        console.error('Error uploading image:', error);
+    }
+};
 
   const registration = () => {
     
@@ -43,6 +70,9 @@ const Registration = () => {
   return (
     <div className={classes.registration}>
       <div className={classes.form}>
+      <input type="file" onChange={e => setImage(e.target.files[0])} />
+      <br/>
+      <br/>
         <label>
           Ввдедите имя:
           <input
@@ -107,7 +137,7 @@ const Registration = () => {
           <div style={{ padding: "0 0 20px 0px", margin: "0 0" }}></div>
         )}
         {/* <input type="submit" value="Зарегистрироватья" disabled={!isValid} /> */}
-        <button onClick={registration}>Зарегистрироватья</button>
+        <button onClick={sendImg}>Зарегистрироватья</button>
       </div>
       {/* <Link to={'/avtorization'}>Назад</Link> */}
     </div>

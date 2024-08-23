@@ -24,19 +24,6 @@ export const UserList: FC<IUserListProps> = ({users}) => {
       }
     })
   }, [usersOnline, users])
-  console.log(userOnline)
-
-  // useEffect(() => {
-  //   const karp = users.map(user => {
-  //     if(usersOnline.includes(user)) {
-  //        return {user, isOnline: true}
-  //     } 
-  //     else {
-  //       return {user, isOnline: false}
-  //     }
-  //   })
-  //   console.log(karp)
-  // }, [])
   
   return (
     <div>

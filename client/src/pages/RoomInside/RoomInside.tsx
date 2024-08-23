@@ -24,7 +24,6 @@ export const RoomInside = () => {
       room: data?.find((post) => post._id === roomName),
     }),
   })
-  console.log('rm', room)
   
   const [addMessage, {isError}] = useAddMessageinRoomMutation();
 
@@ -38,7 +37,6 @@ export const RoomInside = () => {
   useEffect(() => {
     if(client){
     client.on('chatMessage', (data) => {
-      console.log('mes', data)
       setMessages(prev => [...prev, data])
     })
     client.on('refreshGroupRoomClient', () => {
@@ -65,7 +63,12 @@ export const RoomInside = () => {
   const handlerAddMessage = async() => {
     if(message !== '') {
     const newMessage = { roomId: roomName, authorName: _id, text: message };
-    await addMessage(newMessage).unwrap();
+    try {
+      await addMessage(newMessage).unwrap();
+
+    } catch (error) {
+     console.log('error', error) 
+    }
     console.log('отправка')
     client.emit('sendEveryoneMessage', newMessage)
     setMessage('')
