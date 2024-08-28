@@ -1,0 +1,14 @@
+.controlElment{
+    position: relative;
+}
+
+.modal{
+    display: none;
+    position: absolute;
+    top: 59px;
+    right: 120px;
+}
+
+.modal.active{
+    display: flex;
+}

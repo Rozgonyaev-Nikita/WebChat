@@ -3,6 +3,7 @@ import getSocketClient from '../../../socket'
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import classes from './MenuPrivateRoom.module.css'
 import { IUser } from '../../../types/IUser';
+import { Avatar, ESize } from '../../../UI/Avatar/Avatar';
 
 interface IMenuPrivateRoomProps{
     nameRoom: string;
@@ -12,21 +13,23 @@ interface IMenuPrivateRoomProps{
 
 export const MenuPrivateRoom: FC<IMenuPrivateRoomProps> = ({nameRoom, users, myUser}) => {
 
-  const nameOther = users.find(f => f._id !== myUser);
-  const myImage = useAppSelector(state => state.avatar.avatar);
+  const userOther = users.find(f => f._id !== myUser);
 
-  console.log('nameOther', nameOther)
+  console.log('userOther', userOther)
   const isOnline = useAppSelector(state => 
-    state.usersOnline.usersOnline.some(u => u === nameOther._id)
+    state.usersOnline.usersOnline.some(u => u === userOther._id)
   );
 
   console.log('isOnline', isOnline)
 
   return (
     <div className={classes.menuRoom}>
-      {nameOther.avatar && <img src={nameOther.avatar} width={60}/>}
-        <h2>{nameRoom}</h2>
-        {isOnline && 'Онлайн'}
+      {userOther.avatar && <Avatar avatar={userOther.avatar} size={ESize.MIN}/>}
+      <div>
+      <h2>{nameRoom}</h2>
+      {isOnline && 'Онлайн'}
+      </div>
+        
     </div>
   )
 }

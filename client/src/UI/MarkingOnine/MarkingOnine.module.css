@@ -1,0 +1,17 @@
+.imageWrapper{
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    position: relative;
+}
+
+.isOnline{
+    background-color: green;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+
+    position: absolute;
+    right: 0px;
+    bottom: 22px;
+}

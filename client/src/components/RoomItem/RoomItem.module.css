@@ -2,4 +2,40 @@
     background-color: beige;
     border: 1px solid black;
     min-height: 100px;
+    display: flex;
+}
+
+/* убрать */
+.avatarWrapper{
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    position: relative;
+}
+
+.isOnline{
+    background-color: green;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+
+    position: absolute;
+    right: 0px;
+    bottom: 22px;
+}
+
+.avatar{
+    margin-right: 10px;
+    margin-top: -2px;
+}
+
+.info{
+    padding: 5px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.name{
+    font-size: 18px;
 }

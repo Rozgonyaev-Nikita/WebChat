@@ -1,11 +1,24 @@
 .wrapper{
     flex: 1 1 auto;
     display: flex;
-    
+    width: 800px;
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+
+}
+.wrapperMain{
+  width: 800px;
+  display: flex;
+  margin-left: -200px;
 }
 
 .main{
-    background-color: #dcdcdc;
+    /* background-color: #dcdcdc; */
+    background-image: url('../../images/backgroundMain.png'); /* Укажите путь к вашему изображению */
+  background-repeat: repeat; /* Повторять изображение, чтобы создать бесшовный эффект */
+  /* background-size: cover; */
     width: 100%;
-    padding: 15px 20px;
+    height: 100vh;
+    
 }

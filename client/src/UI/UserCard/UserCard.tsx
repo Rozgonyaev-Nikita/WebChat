@@ -44,11 +44,13 @@ export const UserCard: FC<IUserCard> = ({myUserId, user, type = 'basic'}) => {
 
   const writeMessage = async() => {
     console.log(myUserId);
-    const roomId = await wtiteMessage2({myId: myUserId, hisId: user._id})
-    console.log(roomId.data)
-    client.emit('create', roomId.data)
-    client.emit('refreshRooms', {room: roomId.data, recipient: user._id})
-    navigate(`/room/${roomId.data}`)
+    const {data: {id: roomId, isHave}} = await wtiteMessage2({myId: myUserId, hisId: user._id})//!!!! если уже созданна комната то ...
+    console.log(data)
+    if(!isHave){
+    client.emit('create', roomId)
+    client.emit('refreshRooms', {room: roomId, recipient: user._id})
+    }
+    navigate(`/room/${roomId}`)
   }
 
   const whichButton = () => {

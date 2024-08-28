@@ -1,6 +1,26 @@
-.myMessage{
-    background-color: aqua;
+.messageMyWrapper{
+    display: flex;
+    justify-content: flex-end;
 }
-.alienMessage{
+
+.messageAlienWrapper{
+    
+}
+
+.message{
+    display: inline-block;
+    max-width: 170px;
+    padding: 5px;
+    border-radius: 10px;    
+}
+
+.mine{
+    background-color: aqua;    
+    margin-right: 20px;
+}
+
+.alien{
     background-color: red;
+    margin-left: 20px;
+    
 }

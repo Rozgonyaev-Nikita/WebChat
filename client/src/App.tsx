@@ -18,8 +18,6 @@ function App() {
     <Routes>
       <Route path='/' element={<Layout/>}>
         <Route index element={<Chat/>}/>
-        <Route path='/registration' element={<Registration/>}/>
-        <Route path='/avtorization' element={<Avtorization/>}/>
         <Route path='/room/:roomName' element={<RoomInside/>}/>
         <Route path='/friends' element={<LayoutFriends/>}>
           <Route index element={<MyFriends/>}/>
@@ -27,6 +25,8 @@ function App() {
           <Route path='/friends/friendRequests' element={<ShowApplication/>}/>
         </Route>
       </Route>
+      <Route path='/registration' element={<Registration/>}/>
+      <Route path='/avtorization' element={<Avtorization/>}/>
     </Routes>
   );
 }

@@ -11,7 +11,7 @@ export interface IRoom {
 
 export interface IMessage {
     _id?: object;
-    authorName?: string;
+    author: IUser;
     text: string;
     date?: Date;
 }
