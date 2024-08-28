@@ -1,15 +1,23 @@
-import React, { FC } from 'react'
-import classes from './List.module.css'
+import React, { FC } from 'react';
+import classes from './List.module.css';
 
 interface IListProps<T> {
     items: T[];
-    renderItem: (items: T, key?: any) => React.ReactNode;
+    renderItem: (item: T, key?: any) => React.ReactNode;
+    condition?: boolean;
+    inThisCase?: React.ReactNode;
 }
 
-export default function List<T> ({items, renderItem}: IListProps<T>) {
-  return (
-    <div className={classes.list}>
-        {items.map(renderItem)}
-    </div>
-  )
-}
+const List = <T,>({ items, renderItem, condition, inThisCase }: IListProps<T>): React.ReactElement | null => {
+    if (condition !== undefined && !condition) {
+        return inThisCase ? <>{inThisCase}</> : null;
+    }
+
+    return (
+        <div className={classes.list}>
+            {items.map((item, index) => renderItem(item, index))}
+        </div>
+    );
+};
+
+export default List;

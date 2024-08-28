@@ -5,7 +5,6 @@ import { authAction } from '../../store/authSlice';
 import { useAppDispatch } from "../../hooks/reduxHooks";
 import classes from "./Avtorization.module.css";
 import { connectSocket } from "../../socket";
-import { setAvatar } from "../../store/userImageSlice";
 
 
 const Avtorization = () => {
@@ -18,7 +17,7 @@ const Avtorization = () => {
   const avtorization = () => {
     console.log("начало входа");
     axios
-      .get("http://localhost:5000/api/getUser", {
+      .get("http://localhost:5000/api/login", {
         params: {
           login,
           password,
@@ -29,8 +28,7 @@ const Avtorization = () => {
         if (response.data) {
           console.log(user);
           connectSocket()
-          dispatch(authAction(user));
-          dispatch(setAvatar(avatar));
+          dispatch(authAction(response.data));
           navigate("/");
         } else {
           alert("Пробуй еще!!!");

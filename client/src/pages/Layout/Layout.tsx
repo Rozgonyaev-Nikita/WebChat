@@ -13,10 +13,13 @@ export const Layout = () => {
     <>
         <Header/>
         <div className={classes.wrapper}>
+        <div className={classes.wrapperMain}>
             <Aside/>
+            
             <main className={classes.main}>
               <MainPage/>
             </main>
+            </div>
         </div>
         <Footer/>
     </>

@@ -12,13 +12,13 @@ import { fileURLToPath } from 'url';
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-      cb(null, 'uploads/');
+    cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-      cb(null, Date.now() + path.extname(file.originalname));
+    cb(null, Date.now() + path.extname(file.originalname));
   },
 });
-const upload = multer({storage})
+const upload = multer({ storage })
 
 
 const saltRounds = 10;
@@ -52,10 +52,7 @@ const RoomScheme = mongoose.Schema({
   users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
   messages: [
     {
-      authorName: {
-        type: String,
-        required: true,
-      },
+      author: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
       text: {
         type: String,
         required: true,
@@ -67,7 +64,7 @@ const RoomScheme = mongoose.Schema({
     },
   ],
   lastMessage: {
-    authorName: { type: String },
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
     text: { type: String, default: '' },
     date: { type: Date, default: Date.now },
   }
@@ -82,8 +79,8 @@ const UserScheme = mongoose.Schema({
     myFriends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
     wait: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
     offer: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
-  }, 
-  avatar: {type: String}
+  },
+  avatar: { type: String }
 });
 
 export const Room = mongoose.model('room', RoomScheme)
@@ -91,7 +88,7 @@ export const Room = mongoose.model('room', RoomScheme)
 export const Users = mongoose.model('user', UserScheme);
 
 
-app.get("/api/getUser", async(req, res) => {
+app.get("/api/login", async (req, res) => {
   const { login, password } = req.query;
 
   try {
@@ -104,7 +101,7 @@ app.get("/api/getUser", async(req, res) => {
 
       if (match) {
         // отправляем все кроме пароля
-        const { password, ...userWithoutPassword } = user.toObject(); 
+        const { password, ...userWithoutPassword } = user.toObject();
         res.json(userWithoutPassword);
       } else {
         // Пароли не совпадают
@@ -122,26 +119,40 @@ app.get("/api/getUser", async(req, res) => {
   console.log(login, password);
 });
 
+app.get("/api/users/getUser", async (req, res) => {
+  const id = req.query.userId;
+  console.log('id', id)
+  try {
+    const user = await Users.findOne({ login: id }).select('-password');
+    if (user) {
+      res.json(user)
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Ошибка сервера' });
+  }
+
+});
+
 app.post("/api/registration", upload.single('image'), async (req, res) => {
   try {
     // console.log('file', req.file)
     let imageUrl;
-    if(req.file){
+    if (req.file) {
       imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
-    } else{
+    } else {
       imageUrl = null;
     }
     console.log('img', imageUrl)
     const { password, ...otherData } = req.body;
     // const image = req.file?.buffer;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const users = new Users({...otherData, password: hashedPassword, avatar: imageUrl});
+    const users = new Users({ ...otherData, password: hashedPassword, avatar: imageUrl });
     console.log("users", req.body);
     let result = await users.save();
     result = result.toObject();
     if (result) {
       // delete result.password;
-      res.send({...otherData, password: hashedPassword});
+      res.send({ ...otherData, password: hashedPassword });
       console.log(result);
     } else {
       console.log("Posts already register");
@@ -152,14 +163,14 @@ app.post("/api/registration", upload.single('image'), async (req, res) => {
   }
 });
 
-app.get('/api/friends/myFriends', async (req, res) => {
+app.get('/api/users/myFriends', async (req, res) => {
   const { search, userId } = req.query;
-  if (!userId) { 
-    return res.status(401).json({ message: 'Не авторизирован' }); 
+  if (!userId) {
+    return res.status(401).json({ message: 'Не авторизирован' });
   }
   console.log('userId', userId)
   try {
-    
+
     const user = await Users.findOne({ _id: userId }).populate('friends.myFriends');
     let myFriends = user.friends.myFriends;
 
@@ -177,28 +188,28 @@ app.get('/api/friends/myFriends', async (req, res) => {
   }
 });
 
-app.get('/api/friends/listAddFriend', async (req, res) => {
+app.get('/api/users/listAddFriend', async (req, res) => {
   const { search, id } = req.query;
-  if (!id) { 
-    return res.status(401).json({ message: 'Не авторизирован' }); 
+  if (!id) {
+    return res.status(401).json({ message: 'Не авторизирован' });
   }
   try {
     let users;
-    const user = await Users.findOne({_id: id})
-    const otherPeople = [...user.friends.myFriends, ...user.friends.wait, user._id ]
+    const user = await Users.findOne({ _id: id })
+    const otherPeople = [...user.friends.myFriends, ...user.friends.wait, user._id]
 
     if (search) {
 
       users = await Users.find({
         $and: [
           { login: { $regex: search, $options: 'i' } },
-          { _id: { $nin: otherPeople} }
+          { _id: { $nin: otherPeople } }
         ]
       }).populate('friends.offer');
 
     } else {
       // Находим всех пользователей, если имя не предоставлено
-      
+
       users = await Users.find({ _id: { $nin: otherPeople } });
     }
 
@@ -206,7 +217,7 @@ app.get('/api/friends/listAddFriend', async (req, res) => {
       // return res.json({ message: 'Пользователи не найдены' });
       return res.json([])
     }
-    
+
     res.json(users); // Отправляем найденных пользователей
   } catch (err) {
     console.error(err);
@@ -214,27 +225,27 @@ app.get('/api/friends/listAddFriend', async (req, res) => {
   }
 });
 
-app.get('/api/friends/friendRequests', async (req, res) => {
-  const {search, id} = req.query;
-  if (!id) { 
-    return res.status(401).json({ message: 'Не авторизирован' }); 
+app.get('/api/users/friendRequests', async (req, res) => {
+  const { search, id } = req.query;
+  if (!id) {
+    return res.status(401).json({ message: 'Не авторизирован' });
   }
   try {
-    const user = await Users.findOne({_id: id}).populate('friends.wait');
-    const waitFriends = user.friends.wait.filter(u => u.login.includes(search)) 
+    const user = await Users.findOne({ _id: id }).populate('friends.wait');
+    const waitFriends = user.friends.wait.filter(u => u.login.includes(search))
     console.log('waitFriends', waitFriends)
     res.json(waitFriends)
   } catch (error) {
     console.log(error)
   }
-  
+
 });
 
 app.get('/api/getAllrooms/:user', async (req, res) => {
-  const userId = req.params.user; 
+  const userId = req.params.user;
 
   try {
-    
+
     const user = await Users.findById(userId);
 
     if (!user) {
@@ -242,7 +253,14 @@ app.get('/api/getAllrooms/:user', async (req, res) => {
     }
 
     // Теперь найдем комнаты по массиву идентификаторов
-    const rooms = await Room.find({ _id: { $in: user.rooms } }).populate('users');
+    const rooms = await Room.find({ _id: { $in: user.rooms } })
+  .populate('users')
+  .populate('lastMessage.author')
+  .populate({
+    path: 'messages.author',
+    model: 'user' // Убедитесь, что 'user' — это название модели пользователя
+  });
+
     res.json(rooms);
 
     // console.log('rooms', rooms);
@@ -301,35 +319,42 @@ app.post('/api/room/addGroupRoom', async (req, res) => { //вступление 
   }
 });
 
-app.post('/api/room/addPrivateRoom', async(req, res) => {
-  const {myId, hisId} = req.body;
+app.post('/api/room/addPrivateRoom', async (req, res) => {
+  const { myId, hisId } = req.body;
   console.log(req.body)
 
-  const myUser = await Users.findOne({_id: myId})
-  const hisUser = await Users.findOne({_id: hisId})
+  const myUser = await Users.findOne({ _id: myId })
+  const hisUser = await Users.findOne({ _id: hisId })
   const concatLogin = `${myUser.login} ${hisUser.login}`
+  const concatLoginHis = `${hisUser.login} ${myUser.login}`
 
   const firstMyId = `${myId} ${hisId}`;
   const firstHisId = `${hisId} ${myId}`;
+  console.log('firstMyId', firstMyId);
+  console.log('firstHisId', firstHisId);
+
 
   try {
-    const isHave = await Room.findOne({$or: [
-      {nameRoom: firstMyId},
-      {nameRoom: firstHisId}
-    ]})
-  
-    if(isHave) {
-      res.status(200).json(isHave._id)
-    } 
+    const isHave = await Room.findOne({
+      $or: [
+        { nameRoom: concatLogin },
+        { nameRoom: concatLoginHis }
+      ]
+    })
+    console.log('isHave', isHave)
+    if (isHave) {
+      console.log('уже есть!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+      res.status(200).json({ id: isHave._id, isHave: true })
+    }
     else {
       const room = await new Room({
         type: 'private',
         nameRoom: concatLogin,
-        users: [myId, hisId], // добавление пользователя
+        users: [myId, hisId],
         messages: [],
         lastMessage: null,
       })
-      const {_id} = await room.save();
+      const { _id } = await room.save();
 
       myUser.rooms.push(_id);
       hisUser.rooms.push(_id);
@@ -337,18 +362,19 @@ app.post('/api/room/addPrivateRoom', async(req, res) => {
       await myUser.save();
       await hisUser.save();
 
-      res.status(200).json(_id)
+      res.status(200).json({ id: _id, isHave: false })
     }
   } catch (error) {
     console.log('error', error)
   }
-  
+
 })
 
 app.post('/api/addMessage', async (req, res) => {
-  const { roomId, authorName, text } = req.body;
+  const { roomId, author, text } = req.body;
+  console.log('req.body', req.body)
 
-  if (!roomId || !authorName || !text) {
+  if (!roomId || !author || !text) {
     return res.status(400).json({ message: 'roomId, authorName and text are required' });
   }
 
@@ -359,10 +385,10 @@ app.post('/api/addMessage', async (req, res) => {
     if (!room) {
       // return res.status(404).json({ message: 'Room not found' });
     }
-
+    console.log('newMessage', author)
     // Создаем новое сообщение
     const newMessage = {
-      authorName,
+      author,
       text,
       date: new Date()
     };
@@ -383,11 +409,11 @@ app.post('/api/addMessage', async (req, res) => {
   }
 })
 
-app.patch('/api/friends/addNewFriend', async (req, res) => {
+app.patch('/api/users/addNewFriend', async (req, res) => {
   try {
-    const { myId, friendId, action } = req.body; 
-    const myUser = await Users.findOne({ _id: myId }); 
-    const friendUser = await Users.findOne({ _id: friendId }); 
+    const { myId, friendId, action } = req.body;
+    const myUser = await Users.findOne({ _id: myId });
+    const friendUser = await Users.findOne({ _id: friendId });
 
 
     if (!myUser || !friendUser) {
@@ -433,7 +459,7 @@ io.on('connection', (client) => {
     console.log(`User registered: ${username} with id: ${client.id}`);
     console.log('users', users)
     io.emit('user_online', username)
-});
+  });
 
   client.on('enterInRooms', (rooms) => {
     // console.log('rooms', rooms)
@@ -443,8 +469,8 @@ io.on('connection', (client) => {
     )
   })
 
-  client.on('create', async(id) => {
-    const rom = await Room.findOne({_id: id})
+  client.on('create', async (id) => {
+    const rom = await Room.findOne({ _id: id })
     const _id = rom._id.toString()
     console.log(' _id', _id)
     client.join(_id)
@@ -453,20 +479,20 @@ io.on('connection', (client) => {
   client.on('refreshMyFriends', (recipient) => {//id
     const recipientSocketId = users[recipient];
     if (recipientSocketId) {
-    client.to(recipientSocketId).emit('refreshMyFriendsClient')
+      client.to(recipientSocketId).emit('refreshMyFriendsClient')
     }
   })
   client.on('refreshWaitFriends', (recipient) => {//id
     const recipientSocketId = users[recipient];
     if (recipientSocketId) {
-    client.to(recipientSocketId).emit('refreshWaitFriendsClient')
+      client.to(recipientSocketId).emit('refreshWaitFriendsClient')
     }
   })
 
-  client.on('refreshRooms', ({recipient, room}) => {
+  client.on('refreshRooms', ({ recipient, room }) => {
     const recipientSocketId = users[recipient];
     if (recipientSocketId) {
-    client.to(recipientSocketId).emit('refreshRoomClient', room)
+      client.to(recipientSocketId).emit('refreshRoomClient', room)
     }
   })
 
@@ -489,10 +515,10 @@ io.on('connection', (client) => {
     io.emit('user_offline', key)
     for (const username in users) {
       if (users[username] === client.id) {
-          delete users[username];
-          break;
+        delete users[username];
+        break;
       }
-  }
+    }
   });
 })
 

@@ -1,8 +1,34 @@
 .header{
-    height: 50px;
+    height: 60px;
     border-bottom: 1px solid black;
-    /* box-shadow: 0 5px 6px rgba(0, 0, 0, 0.5); */
     box-shadow: 0 px 6px rgba(0, 0, 0, 0.5);
     display: flex;
-    gap: 30px;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 205px;
+    background-color: rgb(237, 238, 240) ;
+}
+
+.groupManagement{
+    display: flex;
+    gap: 80px;
+    height: 100%;
+}
+
+.profile{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.profile:hover{
+    background-color: red;
+}
+
+.avatar{
+    width: 40px; /* Задаем ширину */
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
 }

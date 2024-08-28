@@ -1,0 +1,36 @@
+.profile{
+    width: 200px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding-top: 5px;
+
+    border: 1px solid black;
+    background-color: antiquewhite;
+}
+
+.name{
+    font-weight: 700;
+}
+
+.avatar{
+    margin-top: 10px;
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.action{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding-left: 10px;
+}
+
+.action:hover{
+    background-color: #ccc;
+}

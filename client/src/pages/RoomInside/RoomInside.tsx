@@ -28,11 +28,6 @@ export const RoomInside = () => {
   const [addMessage, {isError}] = useAddMessageinRoomMutation();
 
   const navigate = useNavigate()
-  
-
-  // useEffect(() => {
-  //   room && setMessages(room.messages)
-  // }, [room])
 
   useEffect(() => {
     if(client){
@@ -41,9 +36,7 @@ export const RoomInside = () => {
     })
     client.on('refreshGroupRoomClient', () => {
       try {
-        console.log('абнавлениеее')
         refetch()
-        console.log('абнавлениеее2')
       } catch (error) {
         console.log(error)
       }
@@ -62,18 +55,18 @@ export const RoomInside = () => {
 
   const handlerAddMessage = async() => {
     if(message !== '') {
-    const newMessage = { roomId: roomName, authorName: _id, text: message };
+    const newMessage = { roomId: roomName, author: _id, text: message };
     try {
       await addMessage(newMessage).unwrap();
 
     } catch (error) {
      console.log('error', error) 
     }
-    console.log('отправка')
     client.emit('sendEveryoneMessage', newMessage)
     setMessage('')
     }
   } 
+ 
   return (
     <div>
         { room.type === 'private' ? <MenuPrivateRoom myUser={_id} users={room.users} nameRoom={getNameRoom(room, login)}/> : <MenuGroupRoom myUser={_id} users={room.users} nameRoom={getNameRoom(room, login)}/>}
@@ -81,7 +74,7 @@ export const RoomInside = () => {
         <button onClick={handlerAddMessage}>Отправить</button>
         <List items={room.messages} renderItem={(message, key) => { 
           key = message._id !== undefined ? message._id.toString() : key;
-          return message.authorName === _id ? <MessageItem whose='my' message={message} key={key} /> : <MessageItem whose='alien' message={message} key={key}/>
+          return message.author.login === login ? <MessageItem whose='my' message={message} key={key} /> : <MessageItem whose='alien' message={message} key={key}/>
           }}/>
     </div>
   )

@@ -22,50 +22,17 @@ const Registration = () => {
     const user = new FormData();
     user.append('login', login);
     user.append('password', password);
-    // user.append('rooms', JSON.stringify([]));
     user.append('image', image || null);
 
     try {
         const { data } = await axios.post('http://localhost:5000/api/registration', user);
-        console.log('data', data); // This should be your byte array
-        
-        // Create a Uint8Array from the byte array
-        // const byteArray = new Uint8Array(data.data.data);
-
-        // // Create a Blob from the Uint8Array
-        // const blob = new Blob([byteArray]);
-
-        // // Create a URL from the Blob
-        // const url = URL.createObjectURL(blob);
-        // // setUrlImage(url);
-        // // setNewItem({login: login, password: password, urlImage: url})
-        
-        // console.log('url', url);
+        console.log('data', data); 
+        navigate("/avtorization");
     } catch (error) {
         console.error('Error uploading image:', error);
     }
 };
 
-  const registration = () => {
-    
-      try {
-        if (password === password2) {
-          console.log("Ok");
-          console.log(login, password);
-          axios.post("http://localhost:5000/api/registration", {
-            login,
-            password,
-            rooms: [],
-          });
-          navigate("/avtorization");
-        } else {
-          console.log("Ты что дебил?");
-        }
-      } catch (error) {
-        console.log(error)
-      }
-      
-  };
 
   return (
     <div className={classes.registration}>
