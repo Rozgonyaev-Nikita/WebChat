@@ -12,7 +12,7 @@ interface IGroupRoomItemsProps {
 }
 
 export const GroupRoomItem: FC<IGroupRoomItemsProps> = ({ item, user }) => {
-    console.log('group', user)
+    // console.log('group', user)
     let image;
     return (
         <Link to={`/room/${item._id}`}>

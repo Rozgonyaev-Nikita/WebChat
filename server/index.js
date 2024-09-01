@@ -22,7 +22,7 @@ const upload = multer({ storage })
 
 
 const saltRounds = 10;
-const users = {};
+const usersSocket = {};
 
 const app = express();
 
@@ -271,8 +271,8 @@ app.get('/api/getAllrooms/:user', async (req, res) => {
 });
 
 app.post('/api/room/addGroupRoom', async (req, res) => { //вступление в комнату
-  const { type, nameRoom, userId } = req.body;
-
+  const { nameRoom, usersId } = req.body;
+  const type = 'group';
   try {
     // Найти существующую комнату по типу и имени (если это группа)
     let room = await Room.findOne({ type, nameRoom });
@@ -282,28 +282,29 @@ app.post('/api/room/addGroupRoom', async (req, res) => { //вступление 
       room = new Room({
         type,
         nameRoom,
-        users: [userId], // добавление пользователя
+        users: usersId, // добавление пользователя
         messages: [],
         lastMessage: null,
       });
     } else {
       // Если комната существует, добавьте пользователя, если его там нет
-      if (!room.users.includes(userId)) {
-        room.users.push(userId);
+      if (!room.users.includes(...usersId)) {
+        room.users.push(...usersId);
       }
     }
 
     // Сохраните (или обновите) комнату
     await room.save();
-    Users.findOne({ _id: userId })
-      .then(user => {
-        if (!user) {
+    Users.find({ _id: {$in: usersId} })
+      .then(users => {
+        if (users.length === 0) {
           throw new Error('User not found');
         }
 
-        user.rooms.push(room['_id']);
-
-        return user.save(); // возвращаем промис сохранения
+        users.forEach(user => {
+          user.rooms.push(room['_id']);
+          return user.save(); // возвращаем промис сохранения
+        });
       })
       .then(updatedUser => {
         console.log('User updated successfully', updatedUser);
@@ -448,16 +449,16 @@ app.patch('/api/users/addNewFriend', async (req, res) => {
 });
 
 app.get('/api/usersOnline', async (req, res) => {
-  res.send(Object.keys(users))
+  res.send(Object.keys(usersSocket))
 })
 
 io.on('connection', (client) => {
   console.log('Клиент подключился!')
 
   client.on('register', (username) => {
-    users[username] = client.id;
+    usersSocket[username] = client.id;
     console.log(`User registered: ${username} with id: ${client.id}`);
-    console.log('users', users)
+    console.log('usersSocket', usersSocket)
     io.emit('user_online', username)
   });
 
@@ -477,23 +478,33 @@ io.on('connection', (client) => {
   })
 
   client.on('refreshMyFriends', (recipient) => {//id
-    const recipientSocketId = users[recipient];
+    const recipientSocketId = usersSocket[recipient];
     if (recipientSocketId) {
       client.to(recipientSocketId).emit('refreshMyFriendsClient')
     }
   })
   client.on('refreshWaitFriends', (recipient) => {//id
-    const recipientSocketId = users[recipient];
+    const recipientSocketId = usersSocket[recipient];
     if (recipientSocketId) {
       client.to(recipientSocketId).emit('refreshWaitFriendsClient')
     }
   })
 
   client.on('refreshRooms', ({ recipient, room }) => {
-    const recipientSocketId = users[recipient];
+    const recipientSocketId = usersSocket[recipient];
     if (recipientSocketId) {
       client.to(recipientSocketId).emit('refreshRoomClient', room)
     }
+  })
+
+  client.on('refreshRoomss', ({ recipients, room }) => {
+    recipients.forEach(recipient => {
+      const recipientSocketId = usersSocket[recipient];
+    if (recipientSocketId) {
+      client.to(recipientSocketId).emit('refreshRoomClients', room)
+    }
+    })
+    
   })
 
   client.on('refreshGroupRoom', (room) => {
@@ -503,7 +514,7 @@ io.on('connection', (client) => {
 
   client.on('sendEveryoneMessage', (msg) => {
     const { text, roomId, authorName } = msg;
-    console.log('users', users)
+    console.log('users', usersSocket)
     console.log('msg', msg)
     io.to(roomId).emit('chatMessage', { authorName, text, date: Date.now() })
   })
@@ -511,11 +522,11 @@ io.on('connection', (client) => {
 
   client.on('disconnect', () => {
     console.log('Отключился');
-    const key = Object.entries(users).find(([key, value]) => value === client.id)?.[0];
+    const key = Object.entries(usersSocket).find(([key, value]) => value === client.id)?.[0];
     io.emit('user_offline', key)
-    for (const username in users) {
-      if (users[username] === client.id) {
-        delete users[username];
+    for (const username in usersSocket) {
+      if (usersSocket[username] === client.id) {
+        delete usersSocket[username];
         break;
       }
     }

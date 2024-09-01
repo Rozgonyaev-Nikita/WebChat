@@ -8,12 +8,13 @@ import getSocketClient from '../../socket'
 import classes from './Chat.module.css'
 import { PrivateRoomItem } from '../../components/RoomItem/PrivateRoomItem'
 import { GroupRoomItem } from '../../components/RoomItem/GroupRoomItem'
+import { MenuChat } from '../../components/MenuChat/MenuChat'
 
 export const Chat = () => {
   const client = getSocketClient()
   const [nameRoom, setNameRoom] = useState('')
 
-  const { _id, login, avatar } = useAppSelector(u => u.auth.user)
+  const { _id, login, avatar } = useAppSelector(u => u.auth.user);
   const { data, isLoading, refetch } = useGetRoomApiByUserQuery(_id);
   const [addRoom, { isError }] = useAddGroupRoomMutation();
   const [addMessage] = useAddMessageinRoomMutation();
@@ -40,8 +41,9 @@ export const Chat = () => {
       client.on('chatMessage', async (data) => {
         await addMessage(data)
       })
-      client.on('refreshRoomClient', (id) => {
+      client.on('refreshRoomClients', (id) => {//refreshRoomClient
         try {
+          console.log('обновление чата')
           client.emit('create', id)
           refetch();
         } catch (error) {
@@ -61,6 +63,7 @@ console.log('data', data)
   return (
     
     <div className={classes.chat}>
+      <MenuChat/>
       <input type="text" value={nameRoom} onChange={e => setNameRoom(e.target.value)} />
       <button onClick={connectRoom}>Присоединиться</button>
       <br />
