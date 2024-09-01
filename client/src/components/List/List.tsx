@@ -6,16 +6,17 @@ interface IListProps<T> {
     renderItem: (item: T, key?: any) => React.ReactNode;
     condition?: boolean;
     inThisCase?: React.ReactNode;
+    className?: string;
 }
 
-const List = <T,>({ items, renderItem, condition, inThisCase }: IListProps<T>): React.ReactElement | null => {
+const List = <T,>({ items, renderItem, condition, inThisCase, className = '' }: IListProps<T>): React.ReactElement | null => {
     if (condition !== undefined && !condition) {
         return inThisCase ? <>{inThisCase}</> : null;
     }
 
     return (
-        <div className={classes.list}>
-            {items.map((item, index) => renderItem(item, index))}
+        <div className={`${classes.list} ${className}`}>
+            {items && items.map((item, index) => renderItem(item, index))}
         </div>
     );
 };

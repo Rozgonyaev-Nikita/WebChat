@@ -16,7 +16,7 @@ interface IPrivateRoomItemsProps {
 }
 
 export const PrivateRoomItem: FC<IPrivateRoomItemsProps> = ({ item, user }) => {
-  console.log('private', user)
+  // console.log('private', user)
 
   const { data: otherUser } = useGetUserQuery(getNameRoom(item, user.login));
 

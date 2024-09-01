@@ -4,13 +4,12 @@ import { useAddMessageinRoomMutation, useGetRoomApiByUserQuery } from '../../sto
 import { useAppSelector } from '../../hooks/reduxHooks';
 import List from '../../components/List/List';
 import { MessageItem } from '../../components/MessageItem/MessageItem';
-// import client from '../../socket';
 import { IMessage } from '../../types/IRoom';
 import getSocketClient from '../../socket';
-import { MenuRoom } from '../../components/MenuRoom/MenuRoom';
 import { getNameRoom } from '../../utils';
 import { MenuPrivateRoom } from '../../components/MenuRoom/MenuPrivateRoom/MenuPrivateRoom';
 import { MenuGroupRoom } from '../../components/MenuRoom/MenuGroupRoom/MenuGroupRoom';
+import classes from './RoomInside.module.css'
 
 export const RoomInside = () => {
   const client = getSocketClient();
@@ -68,7 +67,7 @@ export const RoomInside = () => {
   } 
  
   return (
-    <div>
+    <div className={classes.wrapper}>
         { room.type === 'private' ? <MenuPrivateRoom myUser={_id} users={room.users} nameRoom={getNameRoom(room, login)}/> : <MenuGroupRoom myUser={_id} users={room.users} nameRoom={getNameRoom(room, login)}/>}
         <input type="text" value={message} onChange={e => setMessage(e.target.value)} />
         <button onClick={handlerAddMessage}>Отправить</button>

@@ -1,0 +1,8 @@
+.menu{
+    display: flex;
+    justify-content: space-between;
+    background-color: #aaa;
+    padding: 5px 10px;
+
+    position: relative;
+}

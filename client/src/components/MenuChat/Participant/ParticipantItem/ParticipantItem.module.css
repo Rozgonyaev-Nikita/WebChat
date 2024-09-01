@@ -1,0 +1,19 @@
+.item{
+    display: flex;
+    margin-right: 10px;
+    padding: 5px 10px;
+    align-items: center;
+    background-color: aqua;
+    width: 100%;
+    border-radius: 20px;
+}
+
+.info{
+    margin-left: 10px;
+    margin-top: -2px;
+    flex: 1 1 auto;
+}
+.toggle{
+    text-align: right;
+    margin-bottom: -5px;
+}
