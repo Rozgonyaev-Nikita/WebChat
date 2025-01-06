@@ -18,7 +18,7 @@ export const GroupRoomItem: FC<IGroupRoomItemsProps> = ({ item, user }) => {
         <Link to={`/room/${item._id}`}>
             <div className={classes.room}>
             <div className={classes.avatarWrapper}>
-                <Avatar avatar={image} size={ESize.MEDIUM}/>
+                <Avatar avatar={item.avatar} size={ESize.MEDIUM}/>
             </div>
                 <div className={classes.info}>
                     <h1 className={classes.name}>{getNameRoom(item, user.login)}</h1>

@@ -1,12 +1,20 @@
-.controlElment{
-    position: relative;
+.controlElement{
+    /* position: relative; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar{
+    display: flex;
 }
 
 .modal{
     display: none;
     position: absolute;
-    top: 59px;
-    right: 120px;
+    top: 63px;
+    right: 49px;
+    z-index: 1;
 }
 
 .modal.active{

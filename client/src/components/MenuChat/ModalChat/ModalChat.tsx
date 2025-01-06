@@ -33,7 +33,7 @@ export const ModalChat = ({isOpenModal, onCloseModal}) => {
       <ImCross onClick={onCloseModal}/>
       </div>
       <List items={friends} className={classes.list} renderItem={(friend) => <ParticipantItem addUsers={addUsers} setAddUsers={setAddUsers} key={friend._id} friend={friend}/>}/>
-      <CreateGroupChat myId={_id} addUsers={addUsers}/>
+      <CreateGroupChat onCloseModal={onCloseModal} myId={_id} addUsers={addUsers}/>
     </div>
   )
 }

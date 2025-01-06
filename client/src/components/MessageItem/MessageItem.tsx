@@ -10,24 +10,13 @@ interface IMessageItemProps {
 export const MessageItem: FC<IMessageItemProps> = ({message, whose}) => {
   const formattedDate = new Date(message.date).toLocaleString();
 
-  if(whose === 'my'){
+  // if(whose === 'my'){
     return (
-      <div className={classes.messageMyWrapper}>
-    <div className={`${classes.message} ${classes.mine}`}>
-        <h1>{message.text}</h1>
-        <h6>{formattedDate}</h6>
+      <div className={whose === 'my' ? classes.messageMyWrapper : classes.messageAlienWrapper}>
+    <div className={`${classes.message} ${whose === 'my' ?  classes.mine : classes.alien}`}>
+        <h1 className={classes.text}>{message.text}</h1>
+        <h6 className={classes.date}>{formattedDate}</h6>
     </div>
     </div>
     )
-  }
-  
-  return (
-    <div className={classes.messageAlienWrapper}>
-      <div className={`${classes.message} ${classes.alien}`}>
-        <h1>{message.text}</h1>
-        <h6>{formattedDate}</h6>
-    </div>
-    </div>
-    
-  )
 }

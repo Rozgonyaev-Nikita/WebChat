@@ -5,6 +5,7 @@ export interface IRoom {
     type: 'private' | 'group';
     nameRoom?: string;
     users: IUser[];
+    avatar: string;
     messages: IMessage[];
     lastMessage: IMessage;
 }

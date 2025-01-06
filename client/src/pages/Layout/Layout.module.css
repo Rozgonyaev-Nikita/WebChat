@@ -1,16 +1,20 @@
 .wrapper{
-    flex: 1 1 auto;
-    display: flex;
-    width: 700px;
-    width: 100%;
-    min-height: 100vh;
-    justify-content: center;
-
+  flex: 1 1 auto;
+  /* display: flex; */
+  width: 100%;
+  /* min-height: calc(100vh - 188px); */
+  justify-content: center;
+  background-color: #dfdede;
+  /* height: calc(100vh - 88px); */
+  
 }
 .wrapperMain{
-  width: 700px;
+  width: 750px;
   display: flex;
-  margin-left: -200px;
+  /* margin-left: -200px; */
+  margin-left: -12%;
+  /* min-height: calc(100vh - 88px); */
+  height: calc(100vh - 80px);
 }
 
 .main{
@@ -21,4 +25,10 @@
     width: 100%;
     min-height: 100vh;
     
+}
+
+.content{
+  /* min-height: 100%; */
+  /* padding: 24px; */
+  height: calc(100vh - 80px);
 }

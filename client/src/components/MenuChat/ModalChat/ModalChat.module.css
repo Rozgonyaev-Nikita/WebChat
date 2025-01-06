@@ -2,11 +2,14 @@
     display: none;
     position: absolute;
     background-color: red;
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 80px);
     width: 100%;
     margin: -5px -10px;
     padding: 10px;
     z-index: 1;
+
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }
 .modal.active{
     display: flex;
@@ -26,8 +29,9 @@
     flex: 1 1 auto;
     display: grid;
     grid-template-columns: 50% 50%;
-    grid-template-rows: auto 1fr;
-    /* grid-template-columns: 100%; */
+    /* grid-template-rows: auto 1fr; */
+    /* grid-template-rows: repeat(4, 50px); */
+    grid-auto-rows: 50px;
     width: calc(100% - 20px); /* Учитываем 10px padding с обеих сторон */
     /* gap: 50px; */
 }

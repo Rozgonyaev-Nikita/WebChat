@@ -1,3 +1,6 @@
+.wrapper{
+    padding: 10px 5px;
+}
 .myFriends{
 
 }
@@ -6,4 +9,14 @@
 }
 .active {
     background-color: blue;
+    padding: 3px 5px;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.sleep{
+    padding: 3px 5px;
+    border: 1px solid black;
+    border-radius: 10px;
+
 }

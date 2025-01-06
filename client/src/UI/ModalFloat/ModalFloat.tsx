@@ -17,7 +17,7 @@ export const ModalFloat: FC<IModalFloatProps> = ({ children, controlElement }) =
 
   return (
     <div className={classes.controlElement} ref={modalRef}>
-      <div onClick={onOpenModal}>
+      <div className={classes.avatar} onClick={onOpenModal}>
         {controlElement}
       </div>
       <div className={rootState.join(' ')} >

@@ -1,11 +1,12 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import classes from './UserCard.module.css'
 import { usePatchFriendsMutation } from '../../store/userApi';
 import { useAddPrivateRoomMutation } from '../../store/roomApi';
 import { useNavigate } from 'react-router-dom';
 import getSocketClient from '../../socket';
 import { IUser } from '../../types/IUser';
-// import client from '../../socket';
+import { Avatar, ESize } from '../Avatar/Avatar';
+import { FaCheck } from "react-icons/fa6";
 
 
 interface IUserCard {
@@ -57,20 +58,25 @@ export const UserCard: FC<IUserCard> = ({myUserId, user, type = 'basic'}) => {
     if(type === 'basic') {
       return '';
     } else if(type === 'addFriend') {
-      return <button onClick={addnewFriend}>Добавить</button>
+      return <button  onClick={addnewFriend} className={classes.button}>Добавить</button>
     } else if(type === 'wait') {
-      return <button onClick={acceptOffer}>Принять</button>
+      return <button onClick={acceptOffer} className={classes.button}>Принять</button>
     }
     
   }
 
   const waitFriend = user.friends.wait.includes(myUserId)
-
   return (
     <div className={classes.card}>
-        <h1>{user.login}</h1>
-        <button onClick={writeMessage}>Написать сообщение</button>
-        {waitFriend && <h3>Заявка отправлена</h3>}
+      <div className={classes.base}>
+        <Avatar avatar={user.avatar} size={ESize.MEDIUM}/>
+        <div className={classes.description}>
+        <h1 className={classes.login}>{user.login}</h1>
+        <a onClick={writeMessage}>Написать сообщение</a>
+        </div>
+        </div>
+        
+        {waitFriend && <h3><FaCheck style={{marginBottom: '-2px',marginRight: '5px'}}/>Заявка отправлена</h3>}
         {whichButton()}
     </div>
   )

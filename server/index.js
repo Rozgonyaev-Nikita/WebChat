@@ -29,7 +29,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000"
+    origin: "http://localhost:3000"// изменить при хостинге
   }
 });
 
@@ -42,7 +42,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // app.use(morgan('dev'));
 
-mongoose.connect('mongodb://localhost:27017/chat')
+mongoose.connect('mongodb://127.0.0.1:27017/chat')
   .then(() => console.log("Connected to yourDB-name database"))
   .catch((err) => console.log(err));
 
@@ -50,6 +50,7 @@ const RoomScheme = mongoose.Schema({
   type: { type: String, required: true },
   nameRoom: { type: String },
   users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+  avatar: { type: String },
   messages: [
     {
       author: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
@@ -270,9 +271,16 @@ app.get('/api/getAllrooms/:user', async (req, res) => {
   }
 });
 
-app.post('/api/room/addGroupRoom', async (req, res) => { //вступление в комнату
+app.post('/api/room/addGroupRoom', upload.single('avatar'), async (req, res) => { //вступление в комнату
   const { nameRoom, usersId } = req.body;
   const type = 'group';
+  let imageUrl;
+    if (req.file) {
+      imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    } else {
+      imageUrl = null;
+    }
+    console.log('img', imageUrl)
   try {
     // Найти существующую комнату по типу и имени (если это группа)
     let room = await Room.findOne({ type, nameRoom });
@@ -283,6 +291,7 @@ app.post('/api/room/addGroupRoom', async (req, res) => { //вступление 
         type,
         nameRoom,
         users: usersId, // добавление пользователя
+        avatar: imageUrl,
         messages: [],
         lastMessage: null,
       });

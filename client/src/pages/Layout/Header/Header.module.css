@@ -3,10 +3,17 @@
     border-bottom: 1px solid black;
     box-shadow: 0 px 6px rgba(0, 0, 0, 0.5);
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center;
     padding-inline: 205px;
     background-color: rgb(237, 238, 240) ;
+}
+
+.wrapper{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 700px;
+    margin-left: -14%;
 }
 
 .groupManagement{
@@ -23,7 +30,7 @@
 }
 
 .profile:hover{
-    background-color: red;
+    background-color: #e6f4ff;
 }
 
 .avatar{

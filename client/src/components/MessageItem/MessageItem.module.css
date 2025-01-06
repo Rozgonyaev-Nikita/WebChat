@@ -4,14 +4,18 @@
 }
 
 .messageAlienWrapper{
-    
+    display: flex;
+    justify-content: flex-start;
 }
 
-.message{
+.message {
     display: inline-block;
-    max-width: 170px;
+    max-width: 200px;
     padding: 5px;
-    border-radius: 10px;    
+    border-radius: 10px;
+    word-wrap: break-word; /* Для переноса длинных слов */
+    overflow-wrap: break-word; /* Поддержка современных браузеров */
+    white-space: normal; /* Убедитесь, что текст может переноситься */
 }
 
 .mine{
@@ -22,5 +26,12 @@
 .alien{
     background-color: red;
     margin-left: 20px;
-    
+}
+
+.text{
+    font-size: 16px;
+}
+
+.date{
+    font-size: 12px;
 }

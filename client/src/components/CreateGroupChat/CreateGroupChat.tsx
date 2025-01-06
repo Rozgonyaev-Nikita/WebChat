@@ -14,20 +14,30 @@ export interface INewChat {
 interface ICreateGroupChatProps {
   addUsers: string[];
   myId: string;
+  onCloseModal: () => void;
 }
 
-export const CreateGroupChat: FC<ICreateGroupChatProps> = ({addUsers, myId}) => {
+export const CreateGroupChat: FC<ICreateGroupChatProps> = ({addUsers, myId, onCloseModal}) => {
   const client = getSocketClient();
   const [newChat, setNewChat] = useState<INewChat>({ image: null, nameRoom: '', usersId: [...addUsers, myId]});
+  console.log('newChat', newChat)
 
   const [createGroupRoom] = useAddGroupRoomMutation();
 
 
   const createChat = async() => {
-    const resultRoom = await createGroupRoom(newChat)
+    const chat = new FormData();
+    chat.append('nameRoom', newChat.nameRoom);
+    chat.append('avatar', newChat.image || null);
+    newChat.usersId.forEach(userId => {
+      chat.append('usersId', userId); // добавляем каждый элемент массива
+    });
+
+    const resultRoom = await createGroupRoom(chat)
     console.log(resultRoom)
     client.emit('create', resultRoom.data._id)
     client.emit('refreshRoomss', {room: resultRoom.data._id, recipients: addUsers})//dfg{room: roomId, recipient: user._id}
+    onCloseModal();
   }
 
   useEffect(() => {

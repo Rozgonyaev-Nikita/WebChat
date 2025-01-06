@@ -6,3 +6,9 @@
     flex-direction: column;
     gap: 10px;
 }
+
+.asideWrapper{
+    background-color: #fcfcfc;
+    color: red;
+    height: calc(100vh - 58px);
+}

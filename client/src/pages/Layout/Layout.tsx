@@ -1,27 +1,47 @@
-import React from 'react'
-import { Header } from './Header/Header'
-import { Footer } from './Footer/Footer'
+import React, { useState } from 'react';
 import classes from './Layout.module.css'
-import { Aside } from './Aside/Aside'
-import { MainPage } from '../MainPage/MainPage'
-import { useBack, useIsAuth } from '../../hooks'
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  UploadOutlined,
+  UserOutlined,
+  VideoCameraOutlined,
+} from '@ant-design/icons';
+import { Layout, theme } from 'antd';
+import { MainPage } from '../MainPage/MainPage';
+import { _Header } from './Header/Header';
+import { _Aside } from './Aside/Aside';
+import { useBack, useIsAuth } from '../../hooks';
 
-export const Layout = () => {
-    useBack();
-    useIsAuth()
+const { Header, Sider, Content } = Layout;
+
+export const _Layout: React.FC = () => {
+  useBack();
+  useIsAuth()
+  const [collapsed, setCollapsed] = useState(false);
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
+
   return (
-    <>
-        <Header/>
-        <div className={classes.wrapper}>
+    <Layout style={{ minHeight: '100vh' }}>
+        <_Header collapsed={collapsed} setCollapsed={setCollapsed}/>
+      <Layout className={classes.wrapper}>
         <div className={classes.wrapperMain}>
-            <Aside/>
-            
-            <main className={classes.main}>
-              <MainPage/>
-            </main>
-            </div>
+        <_Aside collapsed={collapsed} setCollapsed={setCollapsed}/>
+        <Content className={classes.content}
+          style={{
+            margin: '12px 16px',
+            // padding: 24,
+            // minHeight: 280,
+            background: colorBgContainer,
+            borderRadius: borderRadiusLG,
+          }}
+        >
+          <MainPage />
+        </Content>
         </div>
-        <Footer/>
-    </>
-  )
-}
+      </Layout>
+    </Layout>
+  );
+};

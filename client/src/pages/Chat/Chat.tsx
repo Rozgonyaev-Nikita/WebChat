@@ -59,15 +59,11 @@ export const Chat = () => {
   }, [])
 
 
-console.log('data', data)
   return (
     
     <div className={classes.chat}>
       <MenuChat/>
-      <input type="text" value={nameRoom} onChange={e => setNameRoom(e.target.value)} />
-      <button onClick={connectRoom}>Присоединиться</button>
-      <br />
-      <List items={data} renderItem={(room) => {
+      <List className={classes.list} items={data} renderItem={(room) => {
           return room.type === 'private' ? <PrivateRoomItem item={room} user={{login, avatar}} key={room._id} /> : <GroupRoomItem item={room} user={{login, avatar}} key={room._id}/>}} 
           condition={Boolean(data?.length > 0)} inThisCase={<h2>У вас пока еще нет ни одного чата!</h2>}/>
     </div>

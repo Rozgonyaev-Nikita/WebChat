@@ -42,7 +42,7 @@ export const MyFriends = () => {
 
   return (
     <div>
-      <SearchInput inputValue={inputValue} setInputValue={setInputValue}/>
+      {data?.length > 0 && <SearchInput inputValue={inputValue} setInputValue={setInputValue}/>}
       {data?.length !== 0 && data?.length !== undefined ? <List items={data} renderItem={(user) => <UserCard key={user._id} myUserId={userId} user={user} type='basic'/>}/> : <div><h1>Друзей нет</h1><h2>Ты жалок!</h2></div>}
     </div>
   )

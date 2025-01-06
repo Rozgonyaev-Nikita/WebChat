@@ -29,7 +29,7 @@ export const AddToFriends = () => {
 
   return (
     <div>
-      <SearchInput inputValue={inputValue} setInputValue={setInputValue}/>
+      {data?.length > 0 &&<SearchInput inputValue={inputValue} setInputValue={setInputValue}/>}
       {data && data.length ? <List items={data} renderItem={(friendUser) => <UserCard myUserId={myUser._id} key={friendUser._id} user={friendUser} type='addFriend' />}/> : <h1>Такого пользователя нет!</h1>}
     </div>
   )
