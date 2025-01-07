@@ -502,7 +502,7 @@ io.on('connection', (client) => {
   client.on('refreshRooms', ({ recipient, room }) => {
     const recipientSocketId = usersSocket[recipient];
     if (recipientSocketId) {
-      client.to(recipientSocketId).emit('refreshRoomClient', room)
+      client.to(recipientSocketId).emit('refreshRoomClients', room)
     }
   })
 

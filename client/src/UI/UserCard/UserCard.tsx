@@ -50,6 +50,8 @@ export const UserCard: FC<IUserCard> = ({myUserId, user, type = 'basic'}) => {
     if(!isHave){
     client.emit('create', roomId)
     client.emit('refreshRooms', {room: roomId, recipient: user._id})
+
+    // client.emit('refreshRoomss', {room: roomId, recipients: user._id})
     }
     navigate(`/room/${roomId}`)
   }

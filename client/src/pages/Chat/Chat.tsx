@@ -13,6 +13,7 @@ import { MenuChat } from '../../components/MenuChat/MenuChat'
 export const Chat = () => {
   const client = getSocketClient()
   const [nameRoom, setNameRoom] = useState('')
+  const [cnt, setcnt] = useState(0);
 
   const { _id, login, avatar } = useAppSelector(u => u.auth.user);
   const { data, isLoading, refetch } = useGetRoomApiByUserQuery(_id);
@@ -45,7 +46,9 @@ export const Chat = () => {
         try {
           console.log('обновление чата')
           client.emit('create', id)
-          refetch();
+          refetch().then(() => {
+            console.log("Данные после refetch:", data);
+          });
         } catch (error) {
           console.log(error)
         }
@@ -57,6 +60,12 @@ export const Chat = () => {
     }
 
   }, [])
+
+  useEffect(() => {
+    console.log("Дарова!")
+    // setcnt(cnt + 1)
+    // console.log(cnt, 'Счетчик')
+  })
 
 
   return (
