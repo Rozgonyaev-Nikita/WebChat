@@ -39,3 +39,12 @@
 .name{
     font-size: 18px;
 }
+
+.text{
+    width: 320px; /* Установите нужную ширину */
+    white-space: nowrap; /* Отключить перенос текста */
+    overflow: hidden; /* Скрыть переполнение */
+    text-overflow: ellipsis;
+    display: inline-block;
+    margin-bottom: -3px;
+}

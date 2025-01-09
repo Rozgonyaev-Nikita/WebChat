@@ -21,8 +21,12 @@ export const LastMessage: FC<ILastMessageProps> = ({ message, user }) => {
             ) : (
                 <Avatar avatar={user.avatar} size={ESize.MICRO} className={classes.avatar} />
             )}
-            {message.text ? message.text : 'Сообщений нет!'}
+            {message.text ? <span className={classes.text}>{message.text}</span> : 'Сообщений нет!'}
         </p>
     )
 }
 // сделать строке стили
+// width: 400px; /* Установите нужную ширину */
+//     white-space: nowrap; /* Отключить перенос текста */
+//     overflow: hidden; /* Скрыть переполнение */
+//     text-overflow: ellipsis; 

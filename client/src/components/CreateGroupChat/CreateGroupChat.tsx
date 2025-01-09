@@ -20,7 +20,7 @@ interface ICreateGroupChatProps {
 export const CreateGroupChat: FC<ICreateGroupChatProps> = ({addUsers, myId, onCloseModal}) => {
   const client = getSocketClient();
   const [newChat, setNewChat] = useState<INewChat>({ image: null, nameRoom: '', usersId: [...addUsers, myId]});
-  console.log('newChat', newChat)
+  // console.log('newChat', newChat)
 
   const [createGroupRoom] = useAddGroupRoomMutation();
 

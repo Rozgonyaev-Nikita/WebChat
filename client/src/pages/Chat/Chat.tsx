@@ -9,6 +9,7 @@ import classes from './Chat.module.css'
 import { PrivateRoomItem } from '../../components/RoomItem/PrivateRoomItem'
 import { GroupRoomItem } from '../../components/RoomItem/GroupRoomItem'
 import { MenuChat } from '../../components/MenuChat/MenuChat'
+import { IRoom } from '../../types/IRoom'
 
 export const Chat = () => {
   const client = getSocketClient()
@@ -37,7 +38,7 @@ export const Chat = () => {
   }, [_id])
 
   useEffect(() => {
-
+     console.log('мортира')
     if (client) {
       client.on('chatMessage', async (data) => {
         await addMessage(data)
@@ -56,6 +57,7 @@ export const Chat = () => {
       return () => {
         // client.off('chatMessage');
         // client.off('refreshRoomClient');
+        console.log('поки')
       }
     }
 
@@ -65,7 +67,7 @@ export const Chat = () => {
     console.log("Дарова!")
     // setcnt(cnt + 1)
     // console.log(cnt, 'Счетчик')
-  })
+  }, [])
 
 
   return (
