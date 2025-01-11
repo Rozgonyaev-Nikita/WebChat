@@ -21,7 +21,7 @@ export const LastMessage: FC<ILastMessageProps> = ({ message, user }) => {
             ) : (
                 <Avatar avatar={user.avatar} size={ESize.MICRO} className={classes.avatar} />
             )}
-            {message.text ? <span className={classes.text}>{message.text}</span> : 'Сообщений нет!'}
+            {message.text ? <span className={classes.text}>{message.text} {!message.read && "новое"}</span> : 'Сообщений нет!'}
         </p>
     )
 }

@@ -62,12 +62,20 @@ const RoomScheme = mongoose.Schema({
         type: Date,
         default: Date.now,
       },
+      read: {
+        type: Boolean,
+        default: false,
+      },
     },
   ],
   lastMessage: {
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
     text: { type: String, default: '' },
     date: { type: Date, default: Date.now },
+    read: {
+      type: Boolean,
+      default: false,
+    },
   }
 })
 
@@ -400,7 +408,8 @@ app.post('/api/addMessage', async (req, res) => {
     const newMessage = {
       author,
       text,
-      date: new Date()
+      date: new Date(),
+      read: false,
     };
 
     // Добавляем новое сообщение в массив messages
@@ -456,6 +465,35 @@ app.patch('/api/users/addNewFriend', async (req, res) => {
     res.json(myUser);
   } catch (error) { res.status(400).send({ error: error.message }); }
 });
+
+app.patch('/api/room/markAsRead', async (req, res) => {
+
+    const { roomId, authorId } = req.body; // предположим, вы передаете roomId и authorId в теле запроса
+    console.log('И?', req.body)
+  
+    try {
+      const room = await Room.findById(roomId);
+  
+      if (!room) {
+        return res.status(404).send('Room not found');
+      }
+  
+      // Обновляем сообщения, устанавливая read в true для сообщений, автор которых совпадает с authorId
+      room.messages.forEach(message => {
+        if (message.author.toString() !== authorId) {
+          message.read = true;
+        }
+      });
+      console.log('сообщения', room.messages)
+      await room.save(); // Сохраняем изменения
+  
+      return res.status(200).send(room);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).send('Server error');
+    }
+  
+});//работа
 
 app.get('/api/usersOnline', async (req, res) => {
   res.send(Object.keys(usersSocket))

@@ -51,8 +51,6 @@ export const roomApi = createApi({
                   ]
                 : [{ type: 'Rooms', id: 'LIST' }],
     }),
-    
-    
       addMessageinRoom: builder.mutation({
         query: (body) => ({
           url: 'addMessage',
@@ -77,8 +75,16 @@ export const roomApi = createApi({
         }),
         invalidatesTags: [{type: 'Rooms', id: 'LIST'}]
       }),
+      patchReadMessage: builder.mutation<IRoom[], {roomId: string; authorId: string}>({
+        query: (body) => ({
+          url: 'room/markAsRead',
+          method: 'PATCH',
+          body //{myId: string, hisId: string} {roomId: room._id: string, authorId: string}
+        }),
+        invalidatesTags: [{type: 'Rooms', id: 'LIST'}]
+      }),
     }),
     
   })
 
-  export const { useGetRoomApiByUserQuery, useAddGroupRoomMutation, useAddMessageinRoomMutation, useAddPrivateRoomMutation } = roomApi;
+  export const { useGetRoomApiByUserQuery, useAddGroupRoomMutation, useAddMessageinRoomMutation, useAddPrivateRoomMutation, usePatchReadMessageMutation } = roomApi;

@@ -22,6 +22,7 @@ export const Chat = () => {
   const [addMessage] = useAddMessageinRoomMutation();
   const navigate = useNavigate();
 
+  console.log('чаты', data?.length, data)
   const connectRoom = async () => {
     const resultRoom = await addRoom({ type: 'group', nameRoom, userId: _id })
     console.log('resultRoom', resultRoom.data)
@@ -47,8 +48,8 @@ export const Chat = () => {
         try {
           console.log('обновление чата')
           client.emit('create', id)
-          refetch().then(() => {
-            console.log("Данные после refetch:", data);
+          refetch().then(response => {
+            console.log("Данные после refetch:", response.data);
           });
         } catch (error) {
           console.log(error)

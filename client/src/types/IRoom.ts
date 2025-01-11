@@ -15,6 +15,7 @@ export interface IMessage {
     author: IUser;
     text: string;
     date?: Date;
+    read: boolean;
 }
 
 export interface IActionAdd {
