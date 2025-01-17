@@ -33,13 +33,24 @@ export const RoomInside = () => {
     }),
   })
 
+  const isOnline = useAppSelector(state => {
+    const usersOnline = state.usersOnline.usersOnline;
+    console.log('onl', usersOnline)
+    if(room?.type === 'private'){
+      return state.usersOnline.usersOnline.some(u => u !== _id)
+    }
+  }
+  );
+  
+
   const sortRoom: IRoom = useMemo(() => {
+    console.log('yes')
     if (room) {
         return {
             ...room,
             messages: room.messages.map(message => {
                 
-                if (message.author.login !== login) {
+                if (message.author.login !== login || isOnline) {
                     // Возвращаем новое сообщение с read: true
                     return {
                         ...message,
@@ -51,8 +62,11 @@ export const RoomInside = () => {
             })
         };
     }
-}, [room, login]); // Добавьте login в зависимости, если он может изменяться
+}, [room, login, isOnline]); // Добавьте login в зависимости, если он может изменяться
 
+// console.log('room', room)
+// console.log('sortRoom', sortRoom)
+// console.log('isOnline', isOnline)
 
   const [addMessage, { isError }] = useAddMessageinRoomMutation();
 

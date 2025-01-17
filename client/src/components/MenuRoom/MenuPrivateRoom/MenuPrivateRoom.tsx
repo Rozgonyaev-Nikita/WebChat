@@ -15,12 +15,10 @@ export const MenuPrivateRoom: FC<IMenuPrivateRoomProps> = ({nameRoom, users, myU
 
   const userOther = users.find(f => f._id !== myUser);
 
-  console.log('userOther', userOther)
   const isOnline = useAppSelector(state => 
     state.usersOnline.usersOnline.some(u => u === userOther._id)
-  );
-
-  console.log('isOnline', isOnline)
+  ); 
+  // console.log('isOnline2', isOnline)
 
   return (
     <div className={classes.menuRoom}>
