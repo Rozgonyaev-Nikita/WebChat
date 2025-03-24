@@ -36,9 +36,9 @@ export const RoomInside = () => {
   const isOnline = useAppSelector(state => {
     const usersOnline = state.usersOnline.usersOnline;
     console.log('onl', usersOnline)
-    if(room?.type === 'private'){
+    // if(room?.type === 'private'){
       return state.usersOnline.usersOnline.some(u => u !== _id)
-    }
+    // }
   }
   );
   

@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import classes from './UserCard.module.css'
-import { usePatchFriendsMutation } from '../../store/userApi';
+import { useNotificationMutation, usePatchFriendsMutation } from '../../store/userApi';
 import { useAddPrivateRoomMutation } from '../../store/roomApi';
 import { useNavigate } from 'react-router-dom';
 import getSocketClient from '../../socket';
@@ -10,15 +10,17 @@ import { FaCheck } from "react-icons/fa6";
 
 
 interface IUserCard {
+    myUserLogin?: string;
     myUserId: string;
     user: IUser;
     type?: 'basic' | 'addFriend' | 'wait';
 }
 
-export const UserCard: FC<IUserCard> = ({myUserId, user, type = 'basic'}) => {
+export const UserCard: FC<IUserCard> = ({myUserLogin, myUserId, user, type = 'basic'}) => {
   const client = getSocketClient();
   const [actionFriend] = usePatchFriendsMutation();
   const [wtiteMessage2, {data}] = useAddPrivateRoomMutation();
+  const [notification] = useNotificationMutation();
 
   const navigate = useNavigate();
 
@@ -27,6 +29,9 @@ export const UserCard: FC<IUserCard> = ({myUserId, user, type = 'basic'}) => {
     try {
       await actionFriend({myId: myUserId, friendId: user._id, action: 'sendInvitation'}).unwrap();
       client.emit('refreshWaitFriends', user._id)
+      // client.emit('notification', {type: 'addFriend', to: user._id, from: myUserId})
+      // axios.post('api/users/notification', {type: 'addFriend', to: user._id, from: myUserId}) 
+      await notification({type: 'addFriend', to: user.login, from: myUserLogin}).unwrap();
       console.log('успех')
     } catch (error) {
       console.log('ошибка', error)

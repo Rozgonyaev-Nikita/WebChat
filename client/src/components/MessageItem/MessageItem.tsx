@@ -16,7 +16,7 @@ export const MessageItem: FC<IMessageItemProps> = ({message, whose}) => {
       <div className={whose === 'my' ? classes.messageMyWrapper : classes.messageAlienWrapper}>
     <div className={`${classes.message} ${whose === 'my' ?  classes.mine : classes.alien}`}>
         <h1 className={classes.text}>{message.text}</h1>
-        {message.read ? <IoCheckmarkDoneOutline/> : <IoCheckmarkOutline/>}
+        {whose === 'my' ? (message.read ? <IoCheckmarkDoneOutline/> : <IoCheckmarkOutline/>) : ''}
         <h6 className={classes.date}>{formattedDate}</h6>
     </div>
     </div>

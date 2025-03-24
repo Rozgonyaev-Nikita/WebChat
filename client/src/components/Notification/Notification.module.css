@@ -1,0 +1,29 @@
+.wrapper{
+    width: 220px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding-top: 5px;
+
+    border: 1px solid black;
+    background-color: antiquewhite;
+}
+
+.notification{
+    display: flex;
+    align-items: center;
+
+    height: 60px;
+    width: 220px;
+    gap: 10px;
+    line-height: normal;
+}
+.content{
+    height: 60px;
+    word-wrap: break-word
+}
+.name{
+    color:blue;
+}

@@ -7,8 +7,8 @@ import classes from './Regisatration.module.css'
 
 const Registration = () => {
   const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
+  const [password, setPassword] = useState("123456");
+  const [password2, setPassword2] = useState("123456");
   const [image, setImage] = useState(null);
 
   const navigate = useNavigate();

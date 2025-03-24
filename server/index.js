@@ -83,7 +83,8 @@ const UserScheme = mongoose.Schema({
   login: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   rooms: [{ type: String }],
-  active: { type: Boolean, default: false },
+  active: { type: Boolean, default: false }, 
+  notifications: [{id: {type: String}, type: {type: String}, to: {type: String}, from:  { type: mongoose.Schema.Types.ObjectId, ref: 'user' }, viewed: {type: Boolean}}],
   friends: {
     myFriends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
     wait: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
@@ -102,7 +103,10 @@ app.get("/api/login", async (req, res) => {
 
   try {
     // Находим пользователя по логину
-    const user = await Users.findOne({ login });
+    const user = await Users.findOne({ login }) .populate({
+        path: 'notifications.from', // Указываем путь для заполнения
+        select: 'login avatar' // Указываем, какие поля мы хотим получить
+      });
 
     if (user) {
       // Сравниваем введённый пароль с хешем, хранящимся в базе данных
@@ -166,6 +170,37 @@ app.post("/api/registration", upload.single('image'), async (req, res) => {
     } else {
       console.log("Posts already register");
     }
+  } catch (e) {
+    console.log(e)
+    res.send("Something Went Wrong");
+  }
+});
+
+app.patch("/api/users/notification", async (req, res) => { //{type: 'addFriend', to: user._id, from: myUserId}
+  try {// доделать
+    const { type, from, to } = req.body;
+    console.log("lkfgd", req.body)
+    let fromUser = await Users.findOne({ login: from });
+    let toUser = await Users.findOne({ login: to });
+    console.log('user235', toUser)
+
+    let notifications;
+    switch(type) {
+      case "addFriend":
+        notifications = {
+          id: Date.now().toString(),
+          type: type,
+          to: to,
+          from: fromUser,
+          viewed: false
+        }
+        break;
+      default:
+        console.log('default')
+    }
+    toUser.notifications.push(notifications);
+    await toUser.save();
+
   } catch (e) {
     console.log(e)
     res.send("Something Went Wrong");

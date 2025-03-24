@@ -12,6 +12,7 @@ const initialState: IAuth = {
     login: "",
     password: "",
     rooms: [],
+    notifications: [],
     friends: {
       myFriends: [],
       request: [],
@@ -28,6 +29,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     authAction(state, action) {
+      console.log('привет', action.payload)
       state.user = action.payload;
       state.online = true;
     },
