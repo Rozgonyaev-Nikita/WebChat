@@ -1,50 +1,65 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { authAction } from '../../store/authSlice';
 import { useAppDispatch } from "../../hooks/reduxHooks";
-import classes from "./Avtorization.module.css";
 import { connectSocket } from "../../socket";
+import { 
+  Form, 
+  Input, 
+  Button, 
+  Card, 
+  Typography,
+  Divider,
+  Alert,
+  Layout 
+} from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import styles from './Avtorization.module.css';
 
+const { Title } = Typography;
+const { Content } = Layout;
 
-const Avtorization = () => {
+const Authorization = () => {
   const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("123456");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const avtorization = () => {
-    console.log("начало входа");
-    axios
-      .get("http://localhost:5000/api/login", {
-        params: {
-          login,
-          password,
-        },
-      })
-      .then((response) => {
-        const {avatar, ...user} = response.data
-        if (response.data) {
-          console.log(user);
-          connectSocket()
-          dispatch(authAction(response.data));
-          navigate("/");
-        } else {
-          alert("Пробуй еще!!!");
-        }
-      })
-      .catch((error) => {
-        console.error(error);
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      
+      const response = await axios.get("http://localhost:5000/api/login", {
+        params: { login, password }
       });
+
+      if (response.data) {
+        const { avatar, ...user } = response.data;
+        connectSocket();
+        dispatch(authAction({...user, avatar}));
+        navigate("/");
+      } else {
+        setError("Неверный логин или пароль");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Ошибка при авторизации");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Enter') {
-        avtorization();
+        handleSubmit();
       }
-    }
+    };
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
@@ -53,30 +68,75 @@ const Avtorization = () => {
   }, [login, password]);
 
   return (
-    <div className={classes.avtorization}>
-      <div className={classes.form}>
-        <input
-          type="text"
-          value={login}
-          onChange={(e) => setLogin(e.target.value)}
-          placeholder="Введите логин"
-        />
-        <input
-          type="password" // Изменил на "password" для скрытия пароля
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Введите пароль"
-        />
-        <button onClick={avtorization}>Войти</button>
-        <Link to="/registration" className={classes.back}>
-          Зарегистрироваться
-        </Link>
-        <Link to="/" className={classes.back}>
-          Назад
-        </Link>
-      </div>
-    </div>
+    <Layout className={styles.layout}>
+      <Content className={styles.content}>
+        <Card className={styles.card}>
+          <Title level={3} className={styles.title}>
+            Вход в систему
+          </Title>
+
+          {error && (
+            <Alert 
+              message={error} 
+              type="error" 
+              showIcon 
+              className={styles.alert}
+            />
+          )}
+
+          <Form layout="vertical">
+            <Form.Item
+              label="Логин"
+              rules={[{ required: true, message: 'Введите ваш логин' }]}
+            >
+              <Input
+                prefix={<UserOutlined />}
+                value={login}
+                onChange={(e) => setLogin(e.target.value)}
+                placeholder="Введите логин"
+                size="large"
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Пароль"
+              rules={[{ required: true, message: 'Введите ваш пароль' }]}
+            >
+              <Input.Password
+                prefix={<LockOutlined />}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Введите пароль"
+                size="large"
+              />
+            </Form.Item>
+
+            <Form.Item>
+              <Button
+                type="primary"
+                onClick={handleSubmit}
+                loading={loading}
+                block
+                size="large"
+              >
+                Войти
+              </Button>
+            </Form.Item>
+
+            <Divider className={styles.divider}>Нет аккаунта?</Divider>
+            
+            <Button 
+              type="default" 
+              block
+              size="large"
+            >
+              <Link to="/registration">Зарегистрироваться</Link>
+            </Button>
+          </Form>
+        </Card>
+      </Content>
+    </Layout>
   );
 };
 
-export default Avtorization;
+export default Authorization;

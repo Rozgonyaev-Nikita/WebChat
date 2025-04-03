@@ -30,6 +30,7 @@ const authSlice = createSlice({
   reducers: {
     authAction(state, action) {
       console.log('привет', action.payload)
+      console.log('action.payload', action.payload)
       state.user = action.payload;
       state.online = true;
     },

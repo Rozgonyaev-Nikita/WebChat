@@ -1,112 +1,164 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import classes from './Regisatration.module.css'
-// import { Link, useNavigate } from 'react-router-dom';
+import { 
+  Form, 
+  Input, 
+  Button, 
+  Upload, 
+  message, 
+  Card, 
+  Typography,
+  Divider,
+  Checkbox
+} from 'antd';
+import { UploadOutlined, UserOutlined, LockOutlined } from '@ant-design/icons';
+import styles from './Regisatration.module.css';
+
+const { Title } = Typography;
 
 const Registration = () => {
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("123456");
-  const [password2, setPassword2] = useState("123456");
+  const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
-
   const navigate = useNavigate();
+  const [form] = Form.useForm();
 
-  const {
-    register,
-    formState: { errors },
-  } = useForm({ mode: "onBlur" });
-
-  const sendImg = async () => {
-    const user = new FormData();
-    user.append('login', login);
-    user.append('password', password);
-    user.append('image', image || null);
-
-    try {
-        const { data } = await axios.post('http://localhost:5000/api/registration', user);
-        console.log('data', data); 
-        navigate("/avtorization");
-    } catch (error) {
-        console.error('Error uploading image:', error);
+  const onFinish = async (values) => {
+    if (values.password !== values.password2) {
+      message.error('Пароли не совпадают!');
+      return;
     }
-};
 
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('login', values.login);
+      formData.append('password', values.password);
+      if (image) formData.append('image', image);
+
+      await axios.post('http://localhost:5000/api/registration', formData);
+      message.success('Регистрация прошла успешно!');
+      navigate("/avtorization");
+    } catch (error) {
+      message.error('Ошибка при регистрации');
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const beforeUpload = (file) => {
+    setImage(file);
+    return false;
+  };
 
   return (
-    <div className={classes.registration}>
-      <div className={classes.form}>
-      <input type="file" onChange={e => setImage(e.target.files[0])} />
-      <br/>
-      <br/>
-        <label>
-          Ввдедите имя:
-          <input
-            type="text"
-            style={{ display: "block" }}
-            value={login}
-            {...register("name", {
-              required: "Поле обязательное",
-              minLength: { value: 5, message: "Слишком коротко" },
-            })}
-            onChange={(e) => setLogin(e.target.value)}
-            placeholder="Введите логин"
-          />
-        </label>
-        {errors?.name ? (
-          <div style={{ margin: "0 0", padding: "0 0", color: "red" }}>
-            {errors?.name?.message?.toString() || "karp"}
-          </div>
-        ) : (
-          <div style={{ padding: "0 0 20px 0px", margin: "0 0" }}></div>
-        )}
-        <label>
-          Введите пароль:
-          <input
-            type="password"
-            style={{ display: "block" }}
-            {...register("password", {
-              required: "Поле обязательное",
-              minLength: { value: 5, message: "Слишком короткий пароль" },
-            })}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Введите пароль"
-          />
-        </label>
-        {errors?.password ? (
-          <div style={{ margin: "0 0", padding: "0 0", color: "red" }}>
-            {errors?.password?.message?.toString() || "karp"}
-          </div>
-        ) : (
-          <div style={{ padding: "0 0 20px 0px", margin: "0 0" }}></div>
-        )}
-        <label>
-          Повторите пароль:
-          <input
-            type="password"
-            style={{ display: "block" }}
-            {...register("password2", {
-              required: "Поле обязательное",
-              minLength: { value: 5, message: "Слишком короткий пароль" },
-            })}
-            value={password2}
-            onChange={(e) => setPassword2(e.target.value)}
-            placeholder="Повторите пароль"
-          />
-        </label>
-        {errors?.password2 ? (
-          <div style={{ margin: "0 0", padding: "0 0", color: "red" }}>
-            {errors?.password2?.message?.toString() || "hg"}
-          </div>
-        ) : (
-          <div style={{ padding: "0 0 20px 0px", margin: "0 0" }}></div>
-        )}
-        {/* <input type="submit" value="Зарегистрироватья" disabled={!isValid} /> */}
-        <button onClick={sendImg}>Зарегистрироватья</button>
-      </div>
-      {/* <Link to={'/avtorization'}>Назад</Link> */}
+    <div className={styles.registrationContainer}>
+      <Card className={styles.registrationCard}>
+        <Title level={3} className={styles.title}>
+          Регистрация
+        </Title>
+        
+        <Form
+          form={form}
+          name="register"
+          onFinish={onFinish}
+          scrollToFirstError
+          layout="vertical"
+        >
+          <Form.Item name="avatar" label="Аватар">
+            <Upload
+              name="avatar"
+              listType="picture"
+              beforeUpload={beforeUpload}
+              maxCount={1}
+            >
+              <Button icon={<UploadOutlined />}>Загрузить фото</Button>
+            </Upload>
+          </Form.Item>
+
+          <Form.Item
+            name="login"
+            label="Логин"
+            rules={[
+              { required: true, message: 'Пожалуйста, введите логин!' },
+              { min: 5, message: 'Логин должен быть не менее 5 символов!' },
+            ]}
+          >
+            <Input prefix={<UserOutlined />} placeholder="Придумайте логин" />
+          </Form.Item>
+
+          <Form.Item
+            name="password"
+            label="Пароль"
+            rules={[
+              { required: true, message: 'Пожалуйста, введите пароль!' },
+              { min: 6, message: 'Пароль должен быть не менее 6 символов!' },
+            ]}
+            hasFeedback
+          >
+            <Input.Password prefix={<LockOutlined />} placeholder="Придумайте пароль" />
+          </Form.Item>
+
+          <Form.Item
+            name="password2"
+            label="Подтвердите пароль"
+            dependencies={['password']}
+            hasFeedback
+            rules={[
+              { required: true, message: 'Пожалуйста, подтвердите пароль!' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('password') === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Пароли не совпадают!'));
+                },
+              }),
+            ]}
+          >
+            <Input.Password prefix={<LockOutlined />} placeholder="Повторите пароль" />
+          </Form.Item>
+
+          <Form.Item
+            name="agreement"
+            valuePropName="checked"
+            rules={[
+              {
+                validator: (_, value) =>
+                  value ? Promise.resolve() : Promise.reject(new Error('Необходимо согласие')),
+              },
+            ]}
+          >
+            <Checkbox>
+              Я согласен с <a href="#">условиями использования</a>
+            </Checkbox>
+          </Form.Item>
+
+          <Form.Item>
+            <Button 
+              type="primary" 
+              htmlType="submit" 
+              loading={loading}
+              block
+              className={styles.submitButton}
+            >
+              Зарегистрироваться
+            </Button>
+          </Form.Item>
+
+          <Divider className={styles.divider}>Уже есть аккаунт?</Divider>
+          
+          <Button 
+            type="link" 
+            block
+            onClick={() => navigate("/avtorization")}
+            className={styles.loginLink}
+          >
+            Войти
+          </Button>
+        </Form>
+      </Card>
     </div>
   );
 };

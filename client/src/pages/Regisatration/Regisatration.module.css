@@ -1,23 +1,42 @@
-.registration {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #666;
+.registrationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f0f2f5;
+  padding: 24px;
+}
+
+.registrationCard {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.registrationCard :global(.ant-card-body) {
+  padding: 32px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.submitButton {
+  margin-top: 8px;
+}
+
+.divider {
+  margin: 16px 0;
+}
+
+.loginLink {
+  margin-top: 8px;
+}
+
+@media (max-width: 480px) {
+  .registrationCard :global(.ant-card-body) {
+    padding: 24px;
   }
-  
-  .form {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-  
-    min-width: 200px;
-    max-width: 300px;
-    height: 240px;
-    padding: 5px;
-  
-    border: 1px solid white;
-    border-radius: 5px;
-    background-color: #777;
-  }
+}
