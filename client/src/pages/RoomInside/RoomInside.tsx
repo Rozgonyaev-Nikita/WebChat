@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAddMessageinRoomMutation, useGetRoomApiByUserQuery, usePatchReadMessageMutation } from '../../store/roomApi';
 import { useAppSelector } from '../../hooks/reduxHooks';
@@ -10,7 +10,6 @@ import { getNameRoom } from '../../utils';
 import { MenuPrivateRoom } from '../../components/MenuRoom/MenuPrivateRoom/MenuPrivateRoom';
 import { MenuGroupRoom } from '../../components/MenuRoom/MenuGroupRoom/MenuGroupRoom';
 import classes from './RoomInside.module.css'
-import axios from 'axios';
 
 
 export const RoomInside = () => {
@@ -23,10 +22,10 @@ export const RoomInside = () => {
   
 
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [, setMessages] = useState<IMessage[]>([]);
   const { _id, login } = useAppSelector(u => u.auth.user);
 
-  const [readMessage, {data}] = usePatchReadMessageMutation();
+  const [readMessage] = usePatchReadMessageMutation();
   const { room, refetch } = useGetRoomApiByUserQuery(_id, {
     selectFromResult: ({ data }) => ({
       room: data?.find((post) => post._id === roomName),
@@ -68,7 +67,7 @@ export const RoomInside = () => {
 // console.log('sortRoom', sortRoom)
 // console.log('isOnline', isOnline)
 
-  const [addMessage, { isError }] = useAddMessageinRoomMutation();
+  const [addMessage] = useAddMessageinRoomMutation();
 
   const navigate = useNavigate()
   const scroll = () => {

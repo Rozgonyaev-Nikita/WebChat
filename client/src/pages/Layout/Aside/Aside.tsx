@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { FC } from 'react'
 import classes from './Aside.module.css'
 import {
   UserOutlined,
@@ -34,10 +34,3 @@ export const _Aside:FC<IAside> = ({collapsed, setCollapsed}) => {
       </Sider>
   )
 }
-
-
-
-{/* <aside className={classes.aside}>
-        <Link to='/'>Сообщения</Link>
-        <Link to='/friends'>Друзья</Link>
-    </aside> */}

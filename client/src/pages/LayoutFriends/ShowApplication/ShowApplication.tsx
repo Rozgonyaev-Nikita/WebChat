@@ -3,7 +3,6 @@ import classes from './ShowApplication.module.css'
 import List from '../../../components/List/List'
 import { UserCard } from '../../../UI/UserCard/UserCard'
 import { useAppSelector } from '../../../hooks/reduxHooks'
-import axios from 'axios'
 import { SearchInput } from '../../../UI/SearchInput/SearchInput'
 import { useGetWaitFriendsQuery } from '../../../store/userApi'
 import getSocketClient from '../../../socket'
@@ -14,7 +13,6 @@ import { IUser } from '../../../types/IUser'
 export const ShowApplication = () => {
   const navigate = useNavigate()
   const client = getSocketClient();
-  const [users, setUsers] = useState<IUser[]>([])
   const [inputValue, setInputValue] = useState('')
 
   const myUser = useAppSelector(u => u.auth.user._id)

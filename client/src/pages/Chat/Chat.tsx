@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import List from '../../components/List/List'
-import { RoomItem } from '../../components/RoomItem/RoomItem'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import { useNavigate } from 'react-router-dom'
 import { useAddGroupRoomMutation, useAddMessageinRoomMutation, useGetRoomApiByUserQuery } from '../../store/roomApi'
@@ -9,7 +8,6 @@ import classes from './Chat.module.css'
 import { PrivateRoomItem } from '../../components/RoomItem/PrivateRoomItem'
 import { GroupRoomItem } from '../../components/RoomItem/GroupRoomItem'
 import { MenuChat } from '../../components/MenuChat/MenuChat'
-import { IRoom } from '../../types/IRoom'
 
 export const Chat = () => {
   const client = getSocketClient()

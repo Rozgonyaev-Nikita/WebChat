@@ -6,7 +6,6 @@ import {
 } from '@ant-design/icons';
 import { useAppSelector } from '../../../hooks/reduxHooks'
 import { IoMdNotificationsOutline } from "react-icons/io";
-import avatarDefault from '../../../images/avatarDefault.webp'
 import { ModalFloat } from '../../../UI/ModalFloat/ModalFloat';
 import { Profile } from '../../../components/Profile/Profile';
 import { Avatar, ESize } from '../../../UI/Avatar/Avatar';
@@ -23,7 +22,7 @@ interface IHeader{
 }
 
 export const _Header: FC<IHeader> = ({collapsed, setCollapsed}) => {
-  const { login, avatar } = useAppSelector(u => u.auth.user)
+  const { avatar } = useAppSelector(u => u.auth.user)
   return (
     <Header style={{ display: 'flex', background: '#001529', justifyContent: 'center' }}>
       <div className={classes.wrapper} style={{display: 'flex', gap: '100px'}}>

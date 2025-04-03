@@ -1,19 +1,13 @@
 import React, { useState } from 'react';
 import classes from './Layout.module.css'
-import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-} from '@ant-design/icons';
+
 import { Layout, theme } from 'antd';
 import { MainPage } from '../MainPage/MainPage';
 import { _Header } from './Header/Header';
 import { _Aside } from './Aside/Aside';
 import { useBack, useIsAuth } from '../../hooks';
 
-const { Header, Sider, Content } = Layout;
+const { Content } = Layout;
 
 export const _Layout: React.FC = () => {
   useBack();
