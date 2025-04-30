@@ -18,8 +18,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "noEmitOnError": false,
     "jsx": "react-jsx"
   },
+  // "compilerOptions": {
+  //   "noEmitOnError": false,
+  //   "strict": false
+  // },
   "include": [
     "src"
   ]

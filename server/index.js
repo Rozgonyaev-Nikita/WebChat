@@ -107,7 +107,7 @@ app.get("/api/login", async (req, res) => {
         path: 'notifications.from', // Указываем путь для заполнения
         select: 'login avatar' // Указываем, какие поля мы хотим получить
       });
-
+console.log('user5', user)
     if (user) {
       // Сравниваем введённый пароль с хешем, хранящимся в базе данных
       const match = await bcrypt.compare(password, user.password);

@@ -1,7 +1,9 @@
 .menuRoom{
     border: 1px solid black;
-    background-color: #fc3030;
+    background-color: #aaa;
     display: flex;
+    gap: 20px;
+    padding: 8px 10px;
     /* margin: -24px -24px 15px -24px; */
 
 }
