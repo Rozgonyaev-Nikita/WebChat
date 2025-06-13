@@ -29,7 +29,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000"// изменить при хостинге
+    origin: "https://684c3fdc5b8c260074d21446--webchatkarp.netlify.app"// изменить при хостинге
   }
 });
 
@@ -42,7 +42,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // app.use(morgan('dev'));
 
-mongoose.connect('mongodb://127.0.0.1:27017/chat')
+mongoose.connect('mongodb+srv://dbKarp:LaM3SG4r2NWiunh7@atlascluster.swjds7w.mongodb.net/Web-Chat?retryWrites=true&w=majority')
   .then(() => console.log("Connected to yourDB-name database"))
   .catch((err) => console.log(err));
 
@@ -151,7 +151,7 @@ app.post("/api/registration", upload.single('image'), async (req, res) => {
     // console.log('file', req.file)
     let imageUrl;
     if (req.file) {
-      imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+      imageUrl = `https://webchat-dopi.onrender.com/uploads/${req.file.filename}`;
     } else {
       imageUrl = null;
     }
@@ -319,7 +319,7 @@ app.post('/api/room/addGroupRoom', upload.single('avatar'), async (req, res) => 
   const type = 'group';
   let imageUrl;
     if (req.file) {
-      imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+      imageUrl = `https://webchat-dopi.onrender.com/uploads/${req.file.filename}`;
     } else {
       imageUrl = null;
     }
@@ -622,5 +622,5 @@ app.get('/', (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`server running at http://localhost:${PORT}`);
+  console.log(`server running at https://webchat-dopi.onrender.com:${PORT}`);
 });

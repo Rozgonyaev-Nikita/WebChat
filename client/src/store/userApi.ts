@@ -5,7 +5,7 @@ import { notification } from "antd";
 export const userApi = createApi({
   reducerPath: 'userApi',
   tagTypes: ['Users'],
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/users' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://webchat-dopi.onrender/api/users' }),
   endpoints: (builder) => ({
     getAllUsersByLogin: builder.query<IUser[], { inputValue: string, id: string }>({
       query: ({ inputValue, id }) => `listAddFriend?search=${inputValue}&id=${id}`,

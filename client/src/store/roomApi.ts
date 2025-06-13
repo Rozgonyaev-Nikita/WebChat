@@ -4,7 +4,7 @@ import { IRoom } from '../types/IRoom'
 export const roomApi = createApi({
     reducerPath: 'roomApi',
     tagTypes: ['Rooms'],
-    baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:5000/api/' }),
+    baseQuery: fetchBaseQuery({ baseUrl: 'https://webchat-dopi.onrender/api/' }),
     endpoints: (builder) => ({
       // getRoomApiByUser: builder.query<IRoom[], string>({
       //   query: (user) => `getAllrooms/${user}`,
