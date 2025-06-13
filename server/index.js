@@ -29,7 +29,8 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000"// изменить при хостинге
+    // origin: "http://localhost:3000"// изменить при хостинге
+    origin: "https://webchat-dopi.onrender.com"
   }
 });
 
@@ -42,11 +43,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // app.use(morgan('dev'));
 
-mongoose.connect('mongodb://127.0.0.1:27017/chat')
-  .then(() => console.log("Connected to yourDB-name database"))
-  .catch((err) => console.log(err));
+mongoose.connect('mongodb+srv://dbKarp:B5MdclI18ZYhfEbk@atlascluster.swjds7w.mongodb.net/Web-Chat?retryWrites=true&w=majority')
+  .then(() => console.log("Connected to yourDB-name database"))//mongodb+srv://dbKarp:MZFvZ6cPMP2jkHs@atlascluster.swjds7w.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster
+  .catch((err) => console.log(err)); //'mongodb+srv://dbKarp:B5MdclI18ZYhfEbk@atlascluster.swjds7w.mongodb.net/Web-Chat?retryWrites=true&w=majority';
 
-const RoomScheme = mongoose.Schema({
+const RoomScheme = mongoose.Schema({//MZFgZ3cPMP2uxHs
   type: { type: String, required: true },
   nameRoom: { type: String },
   users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
@@ -151,7 +152,7 @@ app.post("/api/registration", upload.single('image'), async (req, res) => {
     // console.log('file', req.file)
     let imageUrl;
     if (req.file) {
-      imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+      imageUrl = `https://webchat-dopi.onrender.com/uploads/${req.file.filename}`;
     } else {
       imageUrl = null;
     }
@@ -319,7 +320,7 @@ app.post('/api/room/addGroupRoom', upload.single('avatar'), async (req, res) => 
   const type = 'group';
   let imageUrl;
     if (req.file) {
-      imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+      imageUrl = `https://webchat-dopi.onrender.com/uploads/${req.file.filename}`;
     } else {
       imageUrl = null;
     }
@@ -622,5 +623,5 @@ app.get('/', (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`server running at http://localhost:${PORT}`);
+  console.log(`server running at https://webchat-dopi.onrender.com:${PORT}`);
 });
