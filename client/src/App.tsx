@@ -12,6 +12,7 @@ import { LayoutFriends } from './pages/LayoutFriends/LayoutFriends';
 import { MyFriends } from './pages/LayoutFriends/MyFriends/MyFriends';
 import { AddToFriends } from './pages/LayoutFriends/AddToFriends/AddToFriends';
 import { ShowApplication } from './pages/LayoutFriends/ShowApplication/ShowApplication';
+import NotFound from './pages/NotFound/NotFound';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
       </Route>
       <Route path='/registration' element={<Registration/>}/>
       <Route path='/avtorization' element={<Avtorization/>}/>
+      <Route path='*' element={<NotFound/>} />
     </Routes>
   );
 }

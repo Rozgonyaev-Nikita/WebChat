@@ -1,7 +1,7 @@
 .modal{
     display: none;
     position: absolute;
-    background-color: red;
+    background-color: white;
     min-height: calc(100vh - 80px);
     width: 100%;
     margin: -5px -10px;

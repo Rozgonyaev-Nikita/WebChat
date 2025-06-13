@@ -14,7 +14,7 @@ export const MenuChat: FC<IMenuChatProps> = ({}) => {// типы
   return (
     <div className={classes.menu}>
         <ModalChat isOpenModal={isOpenModal} onCloseModal={onCloseModal} />
-        <div>Пока не придумал</div>
+        <div>Создание нового чата</div>
         <BsFillChatSquareDotsFill onClick={onOpenModal}/>
     </div>
   )

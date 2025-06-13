@@ -130,7 +130,7 @@ export const RoomInside = () => {
         <MenuGroupRoom myUser={_id} users={room.users} nameRoom={getNameRoom(room, login)} />
       }
       <div className={classes.wrapperList} ref={chatElement}>
-        {sortRoom?.messages && 
+        {sortRoom?.messages && sortRoom?.messages.length ? 
           <List 
             className={classes.list} 
             items={sortRoom.messages} 
@@ -143,7 +143,8 @@ export const RoomInside = () => {
               />
             }} 
           />
-        }
+          : <h1 className={classes.messageNone}>Сообщений нет!</h1>
+      }
       </div>
       <div className={classes.sendContainer}>
         <div className={classes.inputWrapper}>

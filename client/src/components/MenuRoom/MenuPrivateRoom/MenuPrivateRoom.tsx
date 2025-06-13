@@ -25,7 +25,9 @@ export const MenuPrivateRoom: FC<IMenuPrivateRoomProps> = ({nameRoom, users, myU
       {userOther.avatar && <Avatar avatar={userOther.avatar} size={ESize.MIN}/>}
       <div>
       <h2>{nameRoom}</h2>
-      {isOnline && 'Онлайн'}
+      {/* <span style={{color: '#00dd00 '}}>{isOnline && 'Онлайн'}</span> */}
+      {isOnline ? <span style={{color: '#00dd00 '}}>Онлайн</span> 
+      : <span style={{color: '#dd0000 '}}>Офлайн</span>}
       </div>
         
     </div>

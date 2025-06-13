@@ -75,7 +75,7 @@ export const Chat = () => {
       <MenuChat/>
       <List className={classes.list} items={data} renderItem={(room) => {
           return room.type === 'private' ? <PrivateRoomItem item={room} user={{login, avatar}} key={room._id} /> : <GroupRoomItem item={room} user={{login, avatar}} key={room._id}/>}} 
-          condition={Boolean(data?.length > 0)} inThisCase={<h2>У вас пока еще нет ни одного чата!</h2>}/>
+          condition={Boolean(data?.length > 0)} inThisCase={<h2 className={classes.noChat}>У вас пока еще нет ни одного чата!</h2>}/>
     </div>
   )
 }

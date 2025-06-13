@@ -32,6 +32,10 @@
     margin: 0;
     background-color: #fff;
   }
+
+  .noChat{
+    padding: 10px 10px; 
+  }
   
   .roomsList::-webkit-scrollbar {
     width: 6px;

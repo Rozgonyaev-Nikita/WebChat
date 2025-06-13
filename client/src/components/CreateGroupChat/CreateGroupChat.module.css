@@ -6,7 +6,7 @@
     margin: -10px;
     padding: 5px 10px;
 
-    border-top: 1px solid black;
+    border-top: 1px solid rgba(128, 128, 128, 0.5);
 }
 
 .info{
@@ -19,4 +19,20 @@
 }
 
 .createButton{
+}
+
+.input {
+  width: 250px;
+  max-width: 300px;
+  border-radius: 20px;
+  border-color: grey;
+  padding: 10px 16px;
+  margin-left: 15px;
+}
+
+.button {
+  max-width: 200px;
+  border-radius: 10px;
+  height: 40px;
+  font-weight: 500;
 }

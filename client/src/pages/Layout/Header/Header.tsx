@@ -45,7 +45,7 @@ export const _Header: FC<IHeader> = ({collapsed, setCollapsed}) => {
       {/* <Badge count={5} size={'small'} style={{ backgroundColor: '#52c41a'}}>
         <IoMdNotificationsOutline size={30} color='#fcfcfc'/>
       </Badge> */}
-      <ModalFloat controlElement={<Badge count={5} size={'small'} style={{ backgroundColor: '#52c41a'}}>
+      <ModalFloat controlElement={<Badge count={0} size={'small'} style={{ backgroundColor: '#52c41a'}}>
         <IoMdNotificationsOutline size={30} color='#fcfcfc'/>
       </Badge>}>
             <Notifications/>

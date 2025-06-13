@@ -26,11 +26,14 @@ export const MenuFriends = () => {
   }
 
   return (
-    <Space className={classes.wrapper} size={[8, 16]}>
-      <button className={toogle === 'left' ? classes.active : classes.sleep} onClick={myFrendsOpen}>Мои друзья</button>
-      <button className={toogle === 'middle' ? classes.active : classes.sleep} onClick={addFrendOpen}>Найти друзей</button>
-      <button className={toogle === 'right' ? classes.active : classes.sleep} onClick={showApplication}>Заявки</button>
-
+    <div className={classes.wrapper1}>
+    <Space className={classes.wrapper2} size={[8, 16]}>
+        <button className={toogle === 'left' ? classes.active : classes.sleep} onClick={myFrendsOpen}>Мои друзья</button>
+        <button className={toogle === 'middle' ? classes.active : classes.sleep} onClick={addFrendOpen}>Найти друзей</button>
+        <button className={toogle === 'right' ? classes.active : classes.sleep} onClick={showApplication}>Заявки</button>
+      <hr className={classes.hr} />
     </Space>
+    <hr />
+    </div>
   )
 }

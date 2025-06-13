@@ -2,6 +2,7 @@ import React from 'react'
 import classes from './Profile.module.css'
 import { useAppSelector } from '../../hooks/reduxHooks'
 import { IoExitOutline } from "react-icons/io5";
+import { ImProfile } from "react-icons/im";
 import { Avatar, ESize } from '../../UI/Avatar/Avatar';
 import { Link } from 'react-router-dom';
 
@@ -12,9 +13,15 @@ export const Profile = () => {
     <div className={classes.profile}>
       <Avatar avatar={user.avatar} size={ESize.MEDIUM}/>
       <h2 className={classes.name}>{user.login}</h2>
+      <div className={classes.groupButtons}>
+        <Link to='/profile' className={classes.action}>
+      <ImProfile color='red'/> Профиль
+      </Link>
       <Link to='/avtorization' className={classes.action}>
       <IoExitOutline color='red'/> Выйти
       </Link>
+      </div>
+      
     </div>
   )
 }

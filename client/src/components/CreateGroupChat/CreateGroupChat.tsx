@@ -4,6 +4,8 @@ import { ChooseAvatar } from '../../UI/ChooseAvatar/ChooseAvatar'
 import { useAddGroupRoomMutation } from '../../store/roomApi';
 import { useAppSelector } from '../../hooks/reduxHooks';
 import getSocketClient from '../../socket';
+import Input from 'antd/es/input';
+import Button from 'antd/es/button/button';
 
 export interface INewChat {
   image: Blob;
@@ -48,9 +50,24 @@ export const CreateGroupChat: FC<ICreateGroupChatProps> = ({addUsers, myId, onCl
     <div className={classes.createChat}>
       <div className={classes.info}>
         <ChooseAvatar newChat={newChat} setNewChat={setNewChat} />
-        <input className={classes.input} type="text" value={newChat.nameRoom} onChange={(e) => setNewChat({ ...newChat, nameRoom: e.target.value })} />
+        {/* <input className={classes.input} type="text" value={newChat.nameRoom} onChange={(e) => setNewChat({ ...newChat, nameRoom: e.target.value })} /> */}
+        <Input
+          placeholder="Название чата"
+          value={newChat.nameRoom}
+          onChange={(e) => setNewChat({ ...newChat, nameRoom: e.target.value })}
+          className={classes.input}
+        /> 
       </div>
-      <button className={classes.createButton} onClick={createChat}>Создать чат</button>
+      {/* <button className={classes.createButton} onClick={createChat}>Создать чат</button> */}
+      <Button
+          type="primary"
+          onClick={createChat}
+          // loading={isLoading}
+          className={classes.button}
+        >
+          Создать чат
+        </Button>
     </div>
   )
 }
+ 

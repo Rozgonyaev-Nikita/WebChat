@@ -1,0 +1,24 @@
+.notFoundContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  background-color: #ccc;
+}
+
+.notFoundContainer h1 {
+  font-size: 3rem;
+  color: #ff4444;
+}
+
+.notFoundContainer a {
+  margin-top: 20px;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.notFoundContainer a:hover {
+  text-decoration: underline;
+}
