@@ -43,7 +43,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // app.use(morgan('dev'));
 
-mongoose.connect('mongodb+srv://dbKarp:B5MdclI18ZYhfEbk@atlascluster.swjds7w.mongodb.net/Web-Chat?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://dbKarp:MZFvZ6cPMP2jkHs@atlascluster.swjds7w.mongodb.net/Web-Chat?retryWrites=true&w=majority')
   .then(() => console.log("Connected to yourDB-name database"))//mongodb+srv://dbKarp:MZFvZ6cPMP2jkHs@atlascluster.swjds7w.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster
   .catch((err) => console.log(err)); //'mongodb+srv://dbKarp:B5MdclI18ZYhfEbk@atlascluster.swjds7w.mongodb.net/Web-Chat?retryWrites=true&w=majority';
 
