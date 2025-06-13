@@ -29,12 +29,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-<<<<<<< HEAD
-    // origin: "http://localhost:3000"// изменить при хостинге
-    origin: "https://webchat-dopi.onrender.com"
-=======
     origin: "https://684c3fdc5b8c260074d21446--webchatkarp.netlify.app"// изменить при хостинге
->>>>>>> temp-branch
   }
 });
 
@@ -48,13 +43,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // app.use(morgan('dev'));
 
 mongoose.connect('mongodb+srv://dbKarp:LaM3SG4r2NWiunh7@atlascluster.swjds7w.mongodb.net/Web-Chat?retryWrites=true&w=majority')
-<<<<<<< HEAD
-  .then(() => console.log("Connected to yourDB-name database"))//mongodb+srv://dbKarp:MZFvZ6cPMP2jkHs@atlascluster.swjds7w.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster
-  .catch((err) => console.log(err)); //'mongodb+srv://dbKarp:B5MdclI18ZYhfEbk@atlascluster.swjds7w.mongodb.net/Web-Chat?retryWrites=true&w=majority';
-=======
   .then(() => console.log("Connected to yourDB-name database"))
   .catch((err) => console.log(err));
->>>>>>> temp-branch
 
 const RoomScheme = mongoose.Schema({//MZFgZ3cPMP2uxHs
   type: { type: String, required: true },
