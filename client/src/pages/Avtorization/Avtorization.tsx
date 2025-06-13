@@ -34,7 +34,7 @@ const Authorization = () => {
       setLoading(true);
       setError("");
       
-      const response = await axios.get("http://localhost:5000/api/login", {
+      const response = await axios.get("https://webchat-dopi.onrender.com/api/login", {
         params: { login, password }
       });
 

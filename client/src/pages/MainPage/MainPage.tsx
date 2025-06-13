@@ -16,7 +16,7 @@ export const MainPage = () => {
   useEffect(() => {
     if(client){
       client.emit('register', _id);
-      axios.get('http://localhost:5000/api/usersOnline')
+      axios.get('https://webchat-dopi.onrender.com/api/usersOnline')
       .then( res => dispatch(getUsersOnline(res.data)))
     client.on('connect', () => {
       // client.emit('connection', _id)

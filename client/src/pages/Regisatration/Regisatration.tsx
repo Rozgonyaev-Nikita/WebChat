@@ -36,7 +36,7 @@ const Registration = () => {
       formData.append('password', values.password);
       if (image) formData.append('image', image);
 
-      await axios.post('http://localhost:5000/api/registration', formData);
+      await axios.post('https://webchat-dopi.onrender.com/api/registration', formData);
       message.success('Регистрация прошла успешно!');
       navigate("/avtorization");
     } catch (error) {
