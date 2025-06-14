@@ -15,11 +15,7 @@ import { io, Socket } from 'socket.io-client';
 let client: Socket | null = null;
 
 export const connectSocket = (): void => {
-<<<<<<< HEAD
     client = io('https://webchat-dopi.onrender.com');
-=======
-    client = io('https://webchat-dopi.onrender');
->>>>>>> temp-branch
     console.log('подкл');
 }
 
